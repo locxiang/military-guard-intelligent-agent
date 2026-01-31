@@ -1,0 +1,62 @@
+// 军事风格主题 - 分页样式
+
+// ==================== 军事风格分页 ====================
+.military-pagination {
+  color: var(--military-text-primary);
+
+  .el-pagination {
+    color: var(--military-text-primary);
+  }
+
+  .el-pagination .btn-prev,
+  .el-pagination .btn-next,
+  .el-pagination .number {
+    background: var(--military-bg-card) !important;
+    border: 1px solid var(--military-border) !important;
+    color: var(--military-text-primary) !important;
+  }
+
+  .el-pagination .number.is-active {
+    background: var(--military-primary) !important;
+    border-color: var(--military-primary) !important;
+    color: var(--military-text-primary) !important;
+  }
+}
+
+// ==================== Element Plus 分页覆盖 ====================
+.military-theme .el-pagination {
+  color: var(--military-text-primary) !important;
+}
+
+.military-theme .el-pagination .btn-prev,
+.military-theme .el-pagination .btn-next,
+.military-theme .el-pagination .number {
+  background: var(--military-bg-card) !important;
+  border: 1px solid var(--military-border) !important;
+  color: var(--military-text-primary) !important;
+}
+
+.military-theme .el-pagination .number.is-active {
+  background: var(--military-primary) !important;
+  border-color: var(--military-primary) !important;
+  color: var(--military-text-primary) !important;
+}
+
+// 全局分页覆盖
+.military-theme .gov-pagination {
+  color: var(--military-text-primary) !important;
+}
+
+.military-theme .gov-pagination .el-pagination .btn-prev,
+.military-theme .gov-pagination .el-pagination .btn-next,
+.military-theme .gov-pagination .el-pagination .number {
+  background: var(--military-bg-card) !important;
+  border: 1px solid var(--military-border) !important;
+  color: var(--military-text-primary) !important;
+}
+
+.military-theme .gov-pagination .el-pagination .number.is-active {
+  background: var(--military-primary) !important;
+  border-color: var(--military-primary) !important;
+  color: var(--military-text-primary) !important;
+}

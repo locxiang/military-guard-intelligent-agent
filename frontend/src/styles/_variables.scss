@@ -1,0 +1,101 @@
+// 军事风格主题 - CSS 变量定义
+
+:root {
+  // ==================== 军事风格颜色系统 ====================
+  // 背景色 - 深色军事风格
+  --military-bg-primary: #0A1628;        // 深海军蓝
+  --military-bg-secondary: #1E3A8A;       // 海军蓝
+  --military-bg-tertiary: #0F172A;       // 深炭黑
+  --military-bg-card: rgba(15, 23, 42, 0.8);  // 半透明卡片背景
+  --military-bg-card-hover: rgba(30, 58, 138, 0.3);  // 卡片悬停
+  --military-bg-input: rgba(30, 58, 138, 0.15);  // 输入框背景
+  --military-bg-input-hover: rgba(30, 58, 138, 0.25);  // 输入框悬停
+  --military-bg-input-focus: rgba(30, 58, 138, 0.3);  // 输入框焦点
+  
+  // 主色 - 蓝色系
+  --military-primary: #3B82F6;          // 亮蓝色
+  --military-primary-dark: #1E40AF;     // 深蓝色
+  --military-primary-light: #60A5FA;    // 浅蓝色
+  
+  // 文本色
+  --military-text-primary: #FFFFFF;     // 主文本 - 白色
+  --military-text-secondary: rgba(255, 255, 255, 0.8);  // 次要文本
+  --military-text-muted: rgba(255, 255, 255, 0.6);  // 弱文本
+  --military-text-disabled: rgba(255, 255, 255, 0.4);  // 禁用文本
+  
+  // 边框色
+  --military-border: rgba(59, 130, 246, 0.2);  // 边框
+  --military-border-hover: rgba(59, 130, 246, 0.4);  // 悬停边框
+  --military-border-focus: #3B82F6;      // 焦点边框
+  
+  // 状态色
+  --military-success: #10B981;           // 成功绿
+  --military-warning: #F59E0B;           // 警告橙
+  --military-error: #EF4444;             // 错误红
+  --military-info: #3B82F6;              // 信息蓝
+  
+  // 阴影
+  --military-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --military-shadow-md: 0 4px 8px rgba(0, 0, 0, 0.3);
+  --military-shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.4);
+  --military-shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.5);
+  
+  // 圆角
+  --military-radius-sm: 8px;
+  --military-radius-md: 12px;
+  --military-radius-lg: 16px;
+  --military-radius-xl: 24px;
+  
+  // 过渡
+  --military-transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  // ==================== Element Plus CSS 变量覆盖 ====================
+  --el-fill-color-blank: rgba(30, 58, 138, 0.15);
+  --el-fill-color-light: rgba(30, 58, 138, 0.1);
+  --el-fill-color: rgba(30, 58, 138, 0.2);
+  --el-fill-color-lighter: rgba(30, 58, 138, 0.05);
+  --el-fill-color-extra-light: rgba(30, 58, 138, 0.03);
+  --el-fill-color-dark: rgba(30, 58, 138, 0.3);
+  --el-fill-color-darker: rgba(30, 58, 138, 0.4);
+  
+  --el-bg-color: rgba(15, 23, 42, 0.8);
+  --el-bg-color-overlay: rgba(15, 23, 42, 0.9);
+  --el-bg-color-page: #0A1628;
+  
+  --el-text-color-primary: #FFFFFF;
+  --el-text-color-regular: rgba(255, 255, 255, 0.9);
+  --el-text-color-secondary: rgba(255, 255, 255, 0.7);
+  --el-text-color-placeholder: rgba(255, 255, 255, 0.5);
+  --el-text-color-disabled: rgba(255, 255, 255, 0.4);
+  
+  --el-border-color: rgba(59, 130, 246, 0.2);
+  --el-border-color-light: rgba(59, 130, 246, 0.15);
+  --el-border-color-lighter: rgba(59, 130, 246, 0.1);
+  --el-border-color-extra-light: rgba(59, 130, 246, 0.05);
+  --el-border-color-dark: rgba(59, 130, 246, 0.3);
+  --el-border-color-darker: rgba(59, 130, 246, 0.4);
+  --el-border-color-hover: rgba(59, 130, 246, 0.4);
+  
+  --el-color-primary: #3B82F6;
+  --el-color-primary-light-3: #60A5FA;
+  --el-color-primary-light-5: #93C5FD;
+  --el-color-primary-light-7: #BFDBFE;
+  --el-color-primary-light-8: #DBEAFE;
+  --el-color-primary-light-9: #EFF6FF;
+  --el-color-primary-dark-2: #1E40AF;
+  
+  --el-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  --el-box-shadow-light: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --el-box-shadow-lighter: 0 1px 2px rgba(0, 0, 0, 0.15);
+  --el-box-shadow-dark: 0 8px 16px rgba(0, 0, 0, 0.4);
+
+  // Element Plus 表格专用变量覆盖
+  --el-table-bg-color: transparent;
+  --el-table-tr-bg-color: transparent;
+  --el-table-row-hover-bg-color: rgba(30, 58, 138, 0.3);
+  --el-table-header-bg-color: rgba(15, 23, 42, 0.8);
+  --el-table-header-text-color: #FFFFFF;
+  --el-table-text-color: #FFFFFF;
+  --el-table-border-color: rgba(59, 130, 246, 0.2);
+  --el-table-current-row-bg-color: rgba(30, 58, 138, 0.3);
+}

@@ -1,0 +1,287 @@
+// 军事风格主题 - 表格样式
+
+// ==================== 军事风格表格 ====================
+.military-table {
+  background: transparent !important;
+  color: var(--military-text-primary);
+
+  .el-table {
+    background: transparent !important;
+    border: 1px solid var(--military-border);
+    border-radius: var(--military-radius-lg);
+  }
+
+  .el-table__header-wrapper {
+    background: transparent !important;
+
+    th,
+    th.el-table__cell {
+      background: var(--military-bg-card) !important;
+      background-color: var(--military-bg-card) !important;
+      color: var(--military-text-primary) !important;
+      font-weight: 700;
+      font-size: 14px;
+      border-bottom: 1px solid var(--military-border);
+    }
+  }
+
+  .el-table__body-wrapper {
+    background: transparent !important;
+
+    tr {
+      background: transparent !important;
+      background-color: transparent !important;
+      color: var(--military-text-primary) !important;
+    }
+
+    tr.el-table__row {
+      background: transparent !important;
+      background-color: transparent !important;
+    }
+
+    tr:hover,
+    tr:hover > td,
+    tr:hover > td.el-table__cell {
+      background: var(--military-bg-card-hover) !important;
+      background-color: var(--military-bg-card-hover) !important;
+    }
+
+    td,
+    td.el-table__cell {
+      background: transparent !important;
+      background-color: transparent !important;
+      border-bottom: 1px solid var(--military-border);
+      color: var(--military-text-primary) !important;
+    }
+  }
+
+  // 条纹表格样式
+  .el-table--striped .el-table__body tr.el-table__row--striped {
+    background: rgba(30, 58, 138, 0.1) !important;
+    background-color: rgba(30, 58, 138, 0.1) !important;
+
+    td,
+    td.el-table__cell {
+      background: rgba(30, 58, 138, 0.1) !important;
+      background-color: rgba(30, 58, 138, 0.1) !important;
+    }
+  }
+
+  .el-table--striped .el-table__body tr.el-table__row--striped:hover,
+  .el-table--striped .el-table__body tr.el-table__row--striped:hover td,
+  .el-table--striped .el-table__body tr.el-table__row--striped:hover td.el-table__cell {
+    background: var(--military-bg-card-hover) !important;
+    background-color: var(--military-bg-card-hover) !important;
+  }
+
+  .el-table .cell {
+    color: var(--military-text-primary) !important;
+  }
+}
+
+// ==================== 全局 Element Plus 表格样式覆盖 ====================
+// 表格基础样式 - 通过 CSS 变量强制覆盖 Element Plus 默认值
+.el-table,
+.military-theme .el-table {
+  --el-table-bg-color: transparent !important;
+  --el-table-tr-bg-color: transparent !important;
+  --el-table-row-hover-bg-color: rgba(30, 58, 138, 0.3) !important;
+  --el-table-header-bg-color: rgba(15, 23, 42, 0.8) !important;
+  --el-table-header-text-color: #FFFFFF !important;
+  --el-table-text-color: #FFFFFF !important;
+  --el-table-border-color: rgba(59, 130, 246, 0.2) !important;
+  --el-table-current-row-bg-color: rgba(30, 58, 138, 0.3) !important;
+  
+  background: transparent !important;
+  background-color: transparent !important;
+  color: var(--military-text-primary) !important;
+}
+
+// 表格内部元素
+.el-table__inner-wrapper,
+.military-theme .el-table__inner-wrapper {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+// 表头
+.el-table__header-wrapper,
+.military-theme .el-table__header-wrapper {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.el-table th.el-table__cell,
+.military-theme .el-table th.el-table__cell,
+.el-table__header th,
+.military-theme .el-table__header th {
+  background: var(--military-bg-card) !important;
+  background-color: var(--military-bg-card) !important;
+  color: var(--military-text-primary) !important;
+  border-bottom: 1px solid var(--military-border) !important;
+}
+
+// 表格主体
+.el-table__body-wrapper,
+.military-theme .el-table__body-wrapper {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+// 表格行
+.el-table__body tr,
+.military-theme .el-table__body tr,
+.el-table__body tr.el-table__row,
+.military-theme .el-table__body tr.el-table__row,
+.el-table__row,
+.military-theme .el-table__row {
+  background: transparent !important;
+  background-color: transparent !important;
+  color: var(--military-text-primary) !important;
+}
+
+// 表格单元格
+.el-table td.el-table__cell,
+.military-theme .el-table td.el-table__cell,
+.el-table__body td,
+.military-theme .el-table__body td,
+.el-table__row td,
+.military-theme .el-table__row td {
+  background: transparent !important;
+  background-color: transparent !important;
+  color: var(--military-text-primary) !important;
+  border-bottom: 1px solid var(--military-border) !important;
+}
+
+// ==================== 表格悬停样式 - 强制深色 ====================
+// 核心悬停规则 - 最高优先级
+.el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell,
+.el-table--enable-row-hover .el-table__body tr:hover > td,
+.military-theme .el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell,
+.military-theme .el-table--enable-row-hover .el-table__body tr:hover > td {
+  background: rgba(30, 58, 138, 0.3) !important;
+  background-color: rgba(30, 58, 138, 0.3) !important;
+}
+
+// 通用悬停规则
+.el-table tr:hover > td.el-table__cell,
+.el-table tr:hover > td,
+.military-theme .el-table tr:hover > td.el-table__cell,
+.military-theme .el-table tr:hover > td,
+.el-table__body tr:hover td,
+.military-theme .el-table__body tr:hover td,
+.el-table__body tr:hover > td,
+.military-theme .el-table__body tr:hover > td {
+  background: rgba(30, 58, 138, 0.3) !important;
+  background-color: rgba(30, 58, 138, 0.3) !important;
+}
+
+// 行悬停规则
+.el-table__body tr:hover,
+.military-theme .el-table__body tr:hover,
+.el-table__row:hover,
+.military-theme .el-table__row:hover,
+.el-table .el-table__row:hover,
+.military-theme .el-table .el-table__row:hover {
+  background: rgba(30, 58, 138, 0.3) !important;
+  background-color: rgba(30, 58, 138, 0.3) !important;
+}
+
+// 单元格悬停规则
+.el-table__row:hover > td,
+.military-theme .el-table__row:hover > td,
+.el-table__row:hover > td.el-table__cell,
+.military-theme .el-table__row:hover > td.el-table__cell,
+.el-table .el-table__row:hover > td.el-table__cell,
+.military-theme .el-table .el-table__row:hover > td.el-table__cell {
+  background: rgba(30, 58, 138, 0.3) !important;
+  background-color: rgba(30, 58, 138, 0.3) !important;
+}
+
+// 带边框表格悬停
+.el-table--border .el-table__body tr:hover > td,
+.military-theme .el-table--border .el-table__body tr:hover > td {
+  background: rgba(30, 58, 138, 0.3) !important;
+  background-color: rgba(30, 58, 138, 0.3) !important;
+}
+
+// 固定列悬停背景
+.el-table__fixed-right .el-table__row:hover > td,
+.military-theme .el-table__fixed-right .el-table__row:hover > td,
+.el-table__fixed .el-table__row:hover > td,
+.military-theme .el-table__fixed .el-table__row:hover > td {
+  background: var(--military-bg-card-hover) !important;
+  background-color: var(--military-bg-card-hover) !important;
+}
+
+// 固定列样式
+.el-table__fixed-right-patch,
+.military-theme .el-table__fixed-right-patch {
+  background: var(--military-bg-card) !important;
+  background-color: var(--military-bg-card) !important;
+}
+
+// ==================== 条纹表格样式 ====================
+.el-table--striped .el-table__body tr.el-table__row--striped,
+.military-theme .el-table--striped .el-table__body tr.el-table__row--striped {
+  background: rgba(30, 58, 138, 0.1) !important;
+  background-color: rgba(30, 58, 138, 0.1) !important;
+}
+
+.el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell,
+.military-theme .el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell {
+  background: rgba(30, 58, 138, 0.1) !important;
+  background-color: rgba(30, 58, 138, 0.1) !important;
+}
+
+.el-table--striped .el-table__body tr.el-table__row--striped:hover,
+.military-theme .el-table--striped .el-table__body tr.el-table__row--striped:hover,
+.el-table--striped .el-table__body tr.el-table__row--striped:hover td,
+.military-theme .el-table--striped .el-table__body tr.el-table__row--striped:hover td {
+  background: var(--military-bg-card-hover) !important;
+  background-color: var(--military-bg-card-hover) !important;
+}
+
+// 单元格文字
+.el-table .cell,
+.military-theme .el-table .cell {
+  color: var(--military-text-primary) !important;
+}
+
+// 空状态
+.el-table__empty-block,
+.military-theme .el-table__empty-block {
+  background: transparent !important;
+  color: var(--military-text-primary) !important;
+}
+
+.el-table__empty-text,
+.military-theme .el-table__empty-text {
+  color: var(--military-text-muted) !important;
+}
+
+// 全局表格覆盖
+.military-theme .gov-table .el-table {
+  background: transparent !important;
+  color: var(--military-text-primary) !important;
+}
+
+.military-theme .gov-table .el-table__header-wrapper th {
+  background: var(--military-bg-card) !important;
+  color: var(--military-text-primary) !important;
+  border-bottom: 1px solid var(--military-border) !important;
+}
+
+.military-theme .gov-table .el-table__body-wrapper tr {
+  background: transparent !important;
+  color: var(--military-text-primary) !important;
+}
+
+.military-theme .gov-table .el-table__body-wrapper tr:hover {
+  background: var(--military-bg-card-hover) !important;
+}
+
+.military-theme .gov-table .el-table__body-wrapper td {
+  border-bottom: 1px solid var(--military-border) !important;
+  color: var(--military-text-primary) !important;
+}

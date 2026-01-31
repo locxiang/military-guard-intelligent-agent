@@ -1,0 +1,23 @@
+// 军事风格主题 - 表单样式
+
+// ==================== 全局 Element Plus 表单样式覆盖 ====================
+.el-form-item__label,
+.military-theme .el-form-item__label {
+  color: var(--military-text-primary) !important;
+}
+
+.el-form-item__error,
+.military-theme .el-form-item__error {
+  color: var(--military-error) !important;
+}
+
+// ==================== 全局 Element Plus 单选框和复选框样式覆盖 ====================
+.el-radio__label,
+.military-theme .el-radio__label {
+  color: var(--military-text-primary) !important;
+}
+
+.el-checkbox__label,
+.military-theme .el-checkbox__label {
+  color: var(--military-text-primary) !important;
+}

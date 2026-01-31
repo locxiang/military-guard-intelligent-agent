@@ -1,0 +1,620 @@
+/**
+ * MateChat 政务风格主题样式
+ * 基于 DevUI 主题变量系统 + 政务/军事设计系统
+ * 参考：https://matechat.gitcode.com/use-guide/cli-theme.html
+ */
+
+// ==================== 政务色彩系统定义 ====================
+$gov-primary: #0A2463;           // 藏青色 - 政务主色
+$gov-primary-dark: #001F3F;      // 海军深蓝
+$gov-primary-light: #2C3E50;     // 深炭灰
+$gov-primary-lighter: #E8EDF5;   // 浅色背景
+$gov-accent: #B8860B;            // 哑光金 - 点缀色
+$gov-accent-light: #D4B96A;      // 浅米金
+
+$gov-bg: #F8F9FA;                // 浅米灰 - 页面底色
+$gov-bg-light: #F5F5F5;          // 极浅灰 - 卡片底色
+$gov-white: #FFFFFF;             // 白色
+
+$gov-text: #1A202C;              // 深色文本
+$gov-text-weak: #4A5568;         // 次要文本
+$gov-text-muted: #6C757D;        // 辅助文本
+$gov-placeholder: #9CA3AF;       // 占位符
+
+$gov-border: #E2E8F0;            // 边框色
+$gov-border-dark: #CBD5E0;       // 深边框
+
+$gov-success: #1E7E34;           // 成功绿
+$gov-warning: #B8860B;           // 警告（哑光金）
+$gov-error: #9B2C2C;             // 错误红
+$gov-info: #0A2463;              // 信息（主色）
+
+$gov-shadow: rgba(10, 36, 99, 0.12);
+$gov-shadow-lg: rgba(10, 36, 99, 0.16);
+
+// ==================== DevUI 主题变量覆盖 ====================
+:root {
+  // 品牌色系列
+  --devui-brand: #{$gov-primary};
+  --devui-brand-hover: #{$gov-primary-dark};
+  --devui-brand-active: #{$gov-primary-dark};
+  --devui-brand-foil: #{$gov-bg-light};
+  --devui-brand-active-focus: #{$gov-primary-light};
+  
+  // 主要按钮颜色
+  --devui-primary: #{$gov-primary};
+  --devui-primary-hover: #{$gov-primary-dark};
+  --devui-primary-active: #{$gov-primary-dark};
+  --devui-primary-disabled: #6B7FBA;
+  
+  // 背景色
+  --devui-global-bg: #{$gov-bg};
+  --devui-global-bg-normal: #{$gov-white};
+  --devui-base-bg: #{$gov-white};
+  --devui-base-bg-dark: #{$gov-bg-light};
+  --devui-block: #{$gov-white};
+  --devui-area: #{$gov-bg-light};
+  
+  // 文本颜色 - 确保深色文本
+  --devui-text: #{$gov-text};
+  --devui-text-weak: #{$gov-text-weak};
+  --devui-aide-text: #{$gov-text-muted};
+  --devui-placeholder: #{$gov-placeholder};
+  --devui-light-text: #{$gov-white};
+  --devui-dark-text: #{$gov-text};
+  
+  // 图标颜色
+  --devui-icon-text: #{$gov-text-muted};
+  --devui-icon-fill: #{$gov-text-muted};
+  --devui-icon-fill-hover: #{$gov-primary};
+  --devui-icon-fill-active: #{$gov-primary};
+  
+  // 链接颜色
+  --devui-link: #{$gov-primary};
+  --devui-link-active: #{$gov-primary-dark};
+  
+  // 边框颜色
+  --devui-line: #{$gov-border};
+  --devui-dividing-line: #{$gov-border-dark};
+  
+  // 状态颜色
+  --devui-success: #{$gov-success};
+  --devui-warning: #{$gov-warning};
+  --devui-danger: #{$gov-error};
+  --devui-info: #{$gov-info};
+  
+  // 表单控件
+  --devui-form-control-line: #{$gov-border};
+  --devui-form-control-bg: #{$gov-white};
+  --devui-form-control-line-hover: #{$gov-primary-light};
+  --devui-form-control-line-active: #{$gov-primary};
+  --devui-form-control-interactive-outline: rgba(10, 36, 99, 0.08);
+  
+  // 列表
+  --devui-list-item-active-bg: #{$gov-primary-lighter};
+  --devui-list-item-hover-bg: #{$gov-bg-light};
+  --devui-list-item-hover-text: #{$gov-text};
+  --devui-list-item-selected-bg: #{$gov-primary-lighter};
+  
+  // 禁用状态
+  --devui-disabled-bg: #{$gov-bg-light};
+  --devui-disabled-line: #{$gov-border};
+  --devui-disabled-text: #{$gov-placeholder};
+  
+  // 阴影
+  --devui-shadow: #{$gov-shadow};
+  --devui-light-shadow: #{$gov-shadow};
+  --devui-connected-overlay-shadow: #{$gov-shadow-lg};
+  --devui-feedback-overlay-shadow: #{$gov-shadow-lg};
+  
+  // 弹出层
+  --devui-connected-overlay-bg: #{$gov-white};
+  --devui-fullscreen-overlay-bg: #{$gov-white};
+  --devui-feedback-overlay-bg: #{$gov-primary};
+  --devui-feedback-overlay-text: #{$gov-white};
+  
+  // 字体
+  --devui-font-size: 14px;
+  --devui-font-size-sm: 12px;
+  --devui-font-size-md: 14px;
+  --devui-font-size-lg: 16px;
+  
+  // 圆角
+  --devui-border-radius: 4px;
+  --devui-border-radius-card: 8px;
+}
+
+// 确保全局文本颜色
+body {
+  color: $gov-text;
+}
+
+// ==================== MateChat 组件样式覆盖 ====================
+
+// Layout 布局容器
+.mc-layout {
+  background: $gov-bg !important;
+  font-family: 'Noto Sans SC', 'Microsoft YaHei', '微软雅黑', sans-serif !important;
+  
+  // 全局背景色（聊天内容区域）
+  --mc-global-bg: #{$gov-bg};
+}
+
+// Header 头部
+.mc-header {
+  background: linear-gradient(135deg, $gov-primary 0%, $gov-primary-dark 100%) !important;
+  border-bottom: 3px solid $gov-accent !important;
+  padding: 16px 24px !important;
+  box-shadow: 0 2px 8px $gov-shadow !important;
+  
+  .mc-header-title,
+  .mc-header__title {
+    color: $gov-white !important;
+    font-family: 'Noto Sans SC', 'Microsoft YaHei', '微软雅黑', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 18px !important;
+    letter-spacing: 1px !important;
+  }
+  
+  .mc-header__logo {
+    filter: brightness(0) invert(1);
+  }
+}
+
+// Layout Content 内容区域
+.mc-layout-content {
+  background: $gov-bg !important;
+  padding: 24px !important;
+  color: $gov-text !important;
+}
+
+// Bubble 消息气泡
+.mc-bubble {
+  font-family: 'Noto Sans SC', 'Microsoft YaHei', '微软雅黑', sans-serif !important;
+  font-size: 14px !important;
+  line-height: 1.8 !important;
+}
+
+// 消息内容
+.mc-bubble-content {
+  padding: 12px 16px !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 4px $gov-shadow !important;
+}
+
+// 用户消息（右侧）
+.mc-bubble-right {
+  .mc-bubble-content {
+    background: linear-gradient(135deg, $gov-primary-light 0%, $gov-primary 100%) !important;
+    color: $gov-white !important;
+    border: 1px solid $gov-primary-dark !important;
+    border-radius: 8px 8px 2px 8px !important;
+  }
+}
+
+// 助手消息（左侧）
+.mc-bubble-left {
+  .mc-bubble-content {
+    background: $gov-white !important;
+    color: $gov-text !important;
+    border: 1.5px solid $gov-border-dark !important;
+    border-radius: 8px 8px 8px 2px !important;
+  }
+}
+
+// Avatar 头像
+.mc-bubble-avatar-wrapper {
+  .mc-bubble-avatar-style {
+    border: 2px solid $gov-border-dark !important;
+    box-shadow: 0 2px 4px $gov-shadow !important;
+    background: $gov-primary !important;
+    color: $gov-white !important;
+    font-weight: 600 !important;
+  }
+}
+
+// Input 输入框
+.mc-input,
+.mc-textarea {
+  background: $gov-white !important;
+  border: 1.5px solid $gov-border-dark !important;
+  border-radius: 8px !important;
+  font-family: 'Noto Sans SC', 'Microsoft YaHei', '微软雅黑', sans-serif !important;
+  font-size: 14px !important;
+  color: $gov-text !important;
+  transition: all 0.2s ease !important;
+  
+  &::placeholder {
+    color: $gov-placeholder !important;
+  }
+  
+  &:hover {
+    border-color: $gov-primary-light !important;
+  }
+  
+  &:focus {
+    border-color: $gov-primary !important;
+    box-shadow: 0 0 0 3px rgba(10, 36, 99, 0.1) !important;
+    outline: none !important;
+  }
+}
+
+// 输入框容器
+.mc-input-container,
+.input-container {
+  background: $gov-white !important;
+  border: 1.5px solid $gov-border-dark !important;
+  border-radius: 8px !important;
+  
+  &:focus-within {
+    border-color: $gov-primary !important;
+    box-shadow: 0 0 0 3px rgba(10, 36, 99, 0.1) !important;
+  }
+}
+
+// Layout Sender 发送区域
+.mc-layout-sender {
+  background: $gov-white !important;
+  border-top: 1px solid $gov-border !important;
+  padding: 16px 24px !important;
+}
+
+// Prompt 快捷提示 - 使用全局选择器
+.mc-prompt {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 12px !important;
+  justify-content: center !important;
+}
+
+.mc-prompt-item {
+  background: $gov-white !important;
+  border: 1.5px solid $gov-border-dark !important;
+  border-radius: 8px !important;
+  color: $gov-text !important;
+  font-family: 'Noto Sans SC', 'Microsoft YaHei', '微软雅黑', sans-serif !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  padding: 16px 24px !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+  box-shadow: 0 2px 4px $gov-shadow !important;
+  
+  &:hover {
+    background: linear-gradient(135deg, $gov-white 0%, $gov-primary-lighter 100%) !important;
+    border-color: $gov-primary !important;
+    color: $gov-primary !important;
+    box-shadow: 0 4px 12px $gov-shadow-lg !important;
+    transform: translateY(-2px) !important;
+  }
+}
+
+// 提示项内容
+.mc-prompt-item-content {
+  color: $gov-text !important;
+}
+
+.mc-prompt-item-label {
+  color: $gov-text !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+}
+
+.mc-prompt-item-description {
+  color: $gov-text-muted !important;
+  font-size: 12px !important;
+  margin-top: 4px !important;
+}
+
+// 提示项图标
+.mc-prompt-item-icon,
+.mc-prompt-icon {
+  color: $gov-primary !important;
+}
+
+// Introduction 介绍组件 - 使用全局选择器确保覆盖 scoped 样式
+.mc-introduction {
+  text-align: center !important;
+  padding: 40px 20px !important;
+  color: $gov-text !important;
+  background: transparent !important;
+}
+
+.mc-introduction-logo-container {
+  justify-content: center !important;
+}
+
+.mc-introduction-title {
+  color: $gov-primary !important;
+  font-family: 'Noto Sans SC', 'Microsoft YaHei', '微软雅黑', sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 28px !important;
+  letter-spacing: 2px !important;
+}
+
+.mc-introduction-sub-title {
+  color: $gov-text-weak !important;
+  font-family: 'Noto Sans SC', 'Microsoft YaHei', '微软雅黑', sans-serif !important;
+  font-size: 16px !important;
+  margin-top: 8px !important;
+}
+
+.mc-introduction-description {
+  color: $gov-text-muted !important;
+  font-family: 'Noto Sans SC', 'Microsoft YaHei', '微软雅黑', sans-serif !important;
+  font-size: 14px !important;
+  line-height: 1.8 !important;
+  max-width: 600px !important;
+  margin: 0 auto !important;
+  
+  > div {
+    color: $gov-text-muted !important;
+  }
+}
+
+// Loading 加载动画
+.mc-bubble--loading,
+.mc-bubble-loading {
+  .mc-bubble__content,
+  .mc-bubble-content {
+    background: $gov-bg-light !important;
+    
+    &::after {
+      background: linear-gradient(90deg, transparent, $gov-primary-lighter, transparent) !important;
+    }
+  }
+}
+
+// 滚动条样式
+.mc-layout-content,
+.mc-layout__content {
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: $gov-bg-light;
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: $gov-border-dark;
+    border-radius: 4px;
+    
+    &:hover {
+      background: $gov-primary-light;
+    }
+  }
+}
+
+// ==================== 案件卡片样式 ====================
+.case-results-wrapper {
+  margin-top: 12px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.case-card {
+  border: 1.5px solid $gov-border-dark;
+  border-radius: 8px;
+  padding: 20px;
+  background: $gov-white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px $gov-shadow;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: $gov-primary;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  
+  &:hover {
+    border-color: $gov-primary;
+    background: linear-gradient(135deg, $gov-white 0%, $gov-primary-lighter 100%);
+    box-shadow: 0 4px 12px $gov-shadow-lg;
+    transform: translateY(-2px);
+    
+    &::before {
+      opacity: 1;
+    }
+  }
+  
+  .case-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    gap: 12px;
+  }
+  
+  .case-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: $gov-primary;
+    margin: 0;
+    flex: 1;
+    font-family: 'Noto Sans SC', 'Microsoft YaHei', '微软雅黑', sans-serif;
+    letter-spacing: 0.3px;
+    line-height: 1.6;
+  }
+  
+  .case-subtitle {
+    font-size: 14px;
+    color: $gov-text-muted;
+    margin: 0 0 16px 0;
+    font-family: 'Noto Sans SC', 'Microsoft YaHei', '微软雅黑', sans-serif;
+    line-height: 1.6;
+  }
+  
+  .case-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 16px;
+    padding: 12px 0;
+    border-top: 1px solid $gov-border;
+    border-bottom: 1px solid $gov-border;
+  }
+  
+  .case-meta {
+    font-size: 13px;
+    color: $gov-text-muted;
+    font-family: 'Noto Sans SC', 'Microsoft YaHei', '微软雅黑', sans-serif;
+    line-height: 1.8;
+    position: relative;
+    padding-left: 16px;
+    
+    &::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: $gov-primary;
+      font-weight: bold;
+    }
+  }
+  
+  .case-tags {
+    margin-bottom: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .case-actions {
+    display: flex;
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid $gov-border;
+  }
+}
+
+// ==================== Element Plus 组件样式覆盖 ====================
+.el-tag {
+  font-family: 'Noto Sans SC', 'Microsoft YaHei', '微软雅黑', sans-serif !important;
+  font-weight: 500 !important;
+  border-radius: 4px !important;
+  font-size: 12px !important;
+  padding: 4px 10px !important;
+  border-width: 1.5px !important;
+  letter-spacing: 0.3px !important;
+  
+  &--primary {
+    background-color: $gov-primary !important;
+    border-color: $gov-primary !important;
+    color: $gov-white !important;
+    box-shadow: 0 1px 2px rgba(10, 36, 99, 0.2) !important;
+  }
+  
+  &--info {
+    background-color: $gov-bg-light !important;
+    border-color: $gov-border-dark !important;
+    color: $gov-text-muted !important;
+  }
+  
+  &--success {
+    background-color: $gov-success !important;
+    border-color: $gov-success !important;
+    color: $gov-white !important;
+  }
+  
+  &--warning {
+    background-color: $gov-accent !important;
+    border-color: $gov-accent !important;
+    color: $gov-white !important;
+  }
+  
+  &--danger {
+    background-color: $gov-error !important;
+    border-color: $gov-error !important;
+    color: $gov-white !important;
+  }
+}
+
+.el-button {
+  font-family: 'Noto Sans SC', 'Microsoft YaHei', '微软雅黑', sans-serif !important;
+  border-radius: 4px !important;
+  transition: all 0.2s ease !important;
+  
+  &--primary {
+    background-color: $gov-primary !important;
+    border-color: $gov-primary !important;
+    color: $gov-white !important;
+    font-weight: 600 !important;
+    
+    &:hover {
+      background-color: $gov-primary-dark !important;
+      border-color: $gov-primary-dark !important;
+      box-shadow: 0 2px 8px $gov-shadow-lg !important;
+    }
+  }
+  
+  &--text {
+    color: $gov-primary !important;
+    
+    &:hover {
+      color: $gov-primary-dark !important;
+      background-color: $gov-primary-lighter !important;
+    }
+  }
+}
+
+// ==================== 响应式设计 ====================
+@media (max-width: 768px) {
+  .mc-header {
+    padding: 12px 16px !important;
+    
+    .mc-header-title,
+    .mc-header__title {
+      font-size: 16px !important;
+    }
+  }
+  
+  .mc-layout-content,
+  .mc-layout__content {
+    padding: 16px !important;
+  }
+  
+  .mc-prompt {
+    .mc-prompt-item,
+    .mc-prompt__item {
+      padding: 10px 16px !important;
+      font-size: 13px !important;
+    }
+  }
+  
+  .case-card {
+    padding: 16px;
+    
+    .case-title {
+      font-size: 15px;
+    }
+    
+    .case-info {
+      flex-direction: column;
+      gap: 8px;
+    }
+  }
+}

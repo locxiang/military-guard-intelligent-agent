@@ -1,0 +1,160 @@
+[
+  {
+    "case_no": "AJ2025-001",
+    "case_name": "2025年1月-某试训基地-战士张某盗窃案",
+    "title": "关于张某盗窃战友财物案件的调查报告",
+    "case_type": "盗窃罪",
+    "source_department": "某试训基地保卫处",
+    "incident_time": "2025-01-15 14:30:00",
+    "person_name": "张某",
+    "person_info": {
+      "gender": "男",
+      "nationality": "汉族",
+      "birthPlace": "河北省石家庄市",
+      "enlistmentTime": "2022-09-01",
+      "position": "某连战士"
+    },
+    "incident_process": "2025年1月15日14时30分许，战士张某趁同班战友外出训练之机，潜入宿舍盗窃战友王某现金800元及手机一部。后被值班员发现并报告。",
+    "investigation_process_and_conclusion": "经调查取证，张某承认盗窃事实，涉案财物已全部追回。根据调查结论，张某行为已构成盗窃。",
+    "cause_and_lesson": "该案暴露出连队内务管理存在漏洞，战士法纪观念淡薄。建议加强法制教育，完善内务管理制度。",
+    "case_filing": "2025年1月18日依法立案侦查",
+    "judgment": "依据相关规定给予张某记大过处分，责令退出现役",
+    "file_path": "/uploads/cases/AJ2025-001.pdf",
+    "file_size": 2560000,
+    "file_type": "pdf",
+    "ocr_text": null,
+    "meta_data": null,
+    "tags": ["盗窃", "内部案件", "战士"],
+    "classification_level1": "刑事案件",
+    "classification_level2": "盗窃案",
+    "classification_level3": null,
+    "status": "completed",
+    "created_by": 1,
+    "created_at": "2025-01-20 09:00:00",
+    "timeline": [
+      {
+        "time": "2025-01-15 14:30:00",
+        "event": "事件发生",
+        "type": "incident",
+        "typeLabel": "案件事件",
+        "description": "战士张某趁同班战友外出训练之机，潜入宿舍盗窃战友王某现金800元及手机一部",
+        "timestamp": 1736926200000
+      },
+      {
+        "time": "2025-01-15 15:00:00",
+        "event": "值班员发现并报告",
+        "type": "incident",
+        "typeLabel": "案件事件",
+        "description": "值班员发现异常情况并立即报告",
+        "timestamp": 1736928000000
+      },
+      {
+        "time": "2025-01-16 09:00:00",
+        "event": "调查取证",
+        "type": "investigation",
+        "typeLabel": "办案过程",
+        "description": "保卫处开始调查取证，张某承认盗窃事实",
+        "timestamp": 1736992800000
+      },
+      {
+        "time": "2025-01-18 10:00:00",
+        "event": "立案",
+        "type": "filing",
+        "typeLabel": "办案过程",
+        "description": "依法立案侦查",
+        "timestamp": 1737165600000
+      },
+      {
+        "time": "2025-01-19 16:00:00",
+        "event": "判决/裁定",
+        "type": "judgment",
+        "typeLabel": "办案结果",
+        "description": "依据相关规定给予张某记大过处分，责令退出现役",
+        "timestamp": 1737252000000
+      },
+      {
+        "time": "2025-01-20 09:00:00",
+        "event": "案卷录入系统",
+        "type": "system",
+        "typeLabel": "系统操作",
+        "description": "案卷信息录入到系统中",
+        "timestamp": 1737334800000
+      }
+    ]
+  },
+  {
+    "case_no": "AJ2025-002",
+    "case_name": "2025年1月-某通信旅-班长李某盗窃案",
+    "title": "关于李某盗窃公共财物案件的处理报告",
+    "case_type": "盗窃罪",
+    "source_department": "某通信旅保卫科",
+    "incident_time": "2025-01-08 22:15:00",
+    "person_name": "李某",
+    "person_info": {
+      "gender": "男",
+      "nationality": "汉族",
+      "birthPlace": "山东省济南市",
+      "enlistmentTime": "2019-09-01",
+      "position": "某连班长"
+    },
+    "incident_process": "2025年1月8日晚，班长李某利用职务便利，私自将连队仓库内价值3000余元的物资转移变卖。",
+    "investigation_process_and_conclusion": "经保卫科调查，李某交代了全部犯罪事实，涉案物资已追回大部分。",
+    "cause_and_lesson": "反映出物资管理存在监督缺失，需完善出入库登记和核查制度。",
+    "case_filing": "2025年1月12日立案",
+    "judgment": "依法移送军事检察院处理",
+    "file_path": "/uploads/cases/AJ2025-002.pdf",
+    "file_size": 1850000,
+    "file_type": "pdf",
+    "ocr_text": null,
+    "meta_data": null,
+    "tags": ["盗窃", "公共财物", "班长"],
+    "classification_level1": "刑事案件",
+    "classification_level2": "盗窃案",
+    "classification_level3": null,
+    "status": "completed",
+    "created_by": 1,
+    "created_at": "2025-01-15 10:30:00",
+    "timeline": [
+      {
+        "time": "2025-01-08 22:15:00",
+        "event": "事件发生",
+        "type": "incident",
+        "typeLabel": "案件事件",
+        "description": "班长李某利用职务便利，私自将连队仓库内价值3000余元的物资转移变卖",
+        "timestamp": 1736352900000
+      },
+      {
+        "time": "2025-01-10 09:00:00",
+        "event": "调查取证",
+        "type": "investigation",
+        "typeLabel": "办案过程",
+        "description": "保卫科开始调查，李某交代了全部犯罪事实",
+        "timestamp": 1736481600000
+      },
+      {
+        "time": "2025-01-12 10:00:00",
+        "event": "立案",
+        "type": "filing",
+        "typeLabel": "办案过程",
+        "description": "依法立案",
+        "timestamp": 1736654400000
+      },
+      {
+        "time": "2025-01-14 14:00:00",
+        "event": "判决/裁定",
+        "type": "judgment",
+        "typeLabel": "办案结果",
+        "description": "依法移送军事检察院处理",
+        "timestamp": 1736827200000
+      },
+      {
+        "time": "2025-01-15 10:30:00",
+        "event": "案卷录入系统",
+        "type": "system",
+        "typeLabel": "系统操作",
+        "description": "案卷信息录入到系统中",
+        "timestamp": 1736911800000
+      }
+    ]
+  }
+]

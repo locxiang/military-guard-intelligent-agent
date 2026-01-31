@@ -1,0 +1,253 @@
+// 军事风格主题 - 按钮样式
+// 后台管理系统风格：简洁、专业、低调
+
+// ==================== 主按钮 ====================
+.military-button {
+  position: relative;
+  padding: 8px 16px;
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  border-radius: var(--military-radius-sm);
+  color: var(--military-primary-light);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.military-button:hover:not(:disabled) {
+  background: rgba(59, 130, 246, 0.25);
+  border-color: rgba(59, 130, 246, 0.6);
+  color: #FFFFFF;
+}
+
+.military-button:active:not(:disabled) {
+  background: rgba(59, 130, 246, 0.3);
+}
+
+.military-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+// ==================== 次要按钮 ====================
+.military-button-secondary {
+  position: relative;
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid var(--military-border);
+  border-radius: var(--military-radius-sm);
+  color: var(--military-text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.military-button-secondary:hover:not(:disabled) {
+  background: var(--military-bg-card-hover);
+  border-color: var(--military-border-hover);
+  color: var(--military-text-primary);
+}
+
+.military-button-secondary:active:not(:disabled) {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.military-button-secondary:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+// ==================== 危险按钮 ====================
+.military-button-danger {
+  position: relative;
+  padding: 8px 16px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: var(--military-radius-sm);
+  color: #F87171;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.military-button-danger:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.6);
+  color: #FCA5A5;
+}
+
+.military-button-danger:active:not(:disabled) {
+  background: rgba(239, 68, 68, 0.3);
+}
+
+.military-button-danger:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+// ==================== 按钮尺寸 ====================
+.military-button-sm,
+.military-button-secondary.military-button-sm,
+.military-button-danger.military-button-sm {
+  padding: 4px 10px !important;
+  font-size: 12px !important;
+  min-height: auto !important;
+  gap: 4px !important;
+}
+
+.military-button-lg {
+  padding: 12px 24px;
+  font-size: 15px;
+}
+
+// 小按钮/图标按钮样式
+.military-button-xs,
+.military-button-icon {
+  padding: 4px 8px;
+  font-size: 12px;
+  min-height: 24px;
+  min-width: 24px;
+  border: 1px solid var(--military-border);
+  background: transparent;
+  color: var(--military-text-secondary);
+  border-radius: var(--military-radius-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+}
+
+.military-button-xs:hover:not(:disabled),
+.military-button-icon:hover:not(:disabled) {
+  background: var(--military-bg-card-hover);
+  border-color: var(--military-border-hover);
+  color: var(--military-text-primary);
+}
+
+// 全局按钮最小尺寸设置
+button:not(.el-button):not(.military-button):not(.military-button-secondary):not(.military-button-danger):not(.military-button-xs):not(.military-button-icon) {
+  min-height: 28px;
+  padding: 4px 10px;
+  border-radius: var(--military-radius-sm);
+  border: 1px solid var(--military-border);
+  background: transparent;
+  color: var(--military-text-secondary);
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+button:not(.el-button):not(.military-button):not(.military-button-secondary):not(.military-button-danger):not(.military-button-xs):not(.military-button-icon):hover {
+  background: var(--military-bg-card-hover);
+  border-color: var(--military-border-hover);
+  color: var(--military-text-primary);
+}
+
+// ==================== Element Plus Button 覆盖 ====================
+.military-theme .el-button {
+  background: transparent !important;
+  border: 1px solid var(--military-border) !important;
+  color: var(--military-text-secondary) !important;
+}
+
+.military-theme .el-button:hover {
+  background: var(--military-bg-card-hover) !important;
+  border-color: var(--military-border-hover) !important;
+  color: var(--military-text-primary) !important;
+}
+
+.military-theme .el-button.is-circle {
+  background: transparent !important;
+  border: 1px solid var(--military-border) !important;
+  color: var(--military-text-secondary) !important;
+}
+
+.military-theme .el-button.is-circle:hover {
+  background: var(--military-bg-card-hover) !important;
+  border-color: var(--military-border-hover) !important;
+  color: var(--military-text-primary) !important;
+}
+
+.military-theme .el-button .el-icon {
+  color: inherit !important;
+}
+
+.military-theme .el-button--primary {
+  background: rgba(59, 130, 246, 0.15) !important;
+  border: 1px solid rgba(59, 130, 246, 0.4) !important;
+  color: var(--military-primary-light) !important;
+}
+
+.military-theme .el-button--primary:hover {
+  background: rgba(59, 130, 246, 0.25) !important;
+  border-color: rgba(59, 130, 246, 0.6) !important;
+  color: #FFFFFF !important;
+}
+
+.military-theme .el-button--default {
+  background: transparent !important;
+  border: 1px solid var(--military-border) !important;
+  color: var(--military-text-secondary) !important;
+}
+
+.military-theme .el-button--default:hover {
+  background: var(--military-bg-card-hover) !important;
+  border-color: var(--military-border-hover) !important;
+  color: var(--military-text-primary) !important;
+}
+
+// 全局按钮覆盖
+.military-theme .gov-button-primary {
+  background: rgba(59, 130, 246, 0.15) !important;
+  border: 1px solid rgba(59, 130, 246, 0.4) !important;
+  color: var(--military-primary-light) !important;
+  box-shadow: none !important;
+}
+
+.military-theme .gov-button-primary:hover {
+  background: rgba(59, 130, 246, 0.25) !important;
+  border-color: rgba(59, 130, 246, 0.6) !important;
+}
+
+.military-theme .gov-button-default {
+  background: transparent !important;
+  border: 1px solid var(--military-border) !important;
+  color: var(--military-text-secondary) !important;
+}
+
+.military-theme .gov-button-default:hover {
+  background: var(--military-bg-card-hover) !important;
+  border-color: var(--military-border-hover) !important;
+}
+
+.military-theme .gov-button-danger {
+  background: rgba(239, 68, 68, 0.15) !important;
+  border: 1px solid rgba(239, 68, 68, 0.4) !important;
+  color: #F87171 !important;
+  box-shadow: none !important;
+}
+
+.military-theme .gov-button-danger:hover {
+  background: rgba(239, 68, 68, 0.25) !important;
+  border-color: rgba(239, 68, 68, 0.6) !important;
+}

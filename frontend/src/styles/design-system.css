@@ -1,0 +1,829 @@
+/* 设计系统样式 - 政务专属高端设计系统 */
+/* 政务标准字体：思源黑体（政务版）、微软雅黑（官方标配）、方正小标宋简体（标题专用） */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap');
+/* 注意：方正小标宋简体需要本地安装，这里用思源黑体作为标题备用 */
+
+:root {
+  /* 颜色系统 - 政务专属低饱和高级风 + 海军元素 */
+  /* 主色：藏青、墨蓝、深炭灰 - 政务专属暗色调 */
+  --color-primary: #0A2463;        /* 藏青 - 政务专属主色 */
+  --color-primary-dark: #001F3F;   /* 海军深蓝 - 更深沉 */
+  --color-primary-light: #2C3E50;  /* 深炭灰 - 浅色主色 */
+  --color-secondary: #34495E;      /* 深炭灰变体 */
+  
+  /* 军事/海军专属色 */
+  --color-navy-blue: #001F3F;      /* 纯正海军蓝 */
+  --color-steel-grey: #A0AEC0;     /* 钢灰 - 舰艇金属感 */
+  --color-ocean-blue: #1A365D;     /* 海洋迷彩蓝 */
+
+  /* 点缀色：哑光金、浅米金 - 仅用于标题标红、按钮hover、重要模块边框 */
+  --color-accent: #B8860B;         /* 哑光金 - 点缀色 */
+  --color-accent-light: #D4B96A;   /* 浅米金 - 浅色点缀 */
+  --color-accent-hover: #9A7209;   /* 哑光金hover - 深一点 */
+  
+  /* CTA按钮色 - 使用海军蓝，hover时加哑光金点缀 */
+  --color-cta: #0A2463;            /* 行动按钮 - 藏青 */
+  --color-cta-hover: #001F3F;      /* 悬停 - 海军深蓝 */
+  
+  /* 底色：浅米灰、极浅灰 - 不用纯白，减少视觉刺眼感 */
+  --color-background: #F8F9FA;     /* 浅米灰 - 页面底色 */
+  --color-background-light: #F5F5F5; /* 极浅灰 - 卡片底色 */
+  --color-background-dark: #001F3F; /* 深色背景 */
+  
+  /* 文本色 */
+  --color-text: #1A202C;           /* 深色文本 - 更黑一点增加对比 */
+  --color-text-muted: #4A5568;     /* 次要文本 - 钢灰色系 */
+  
+  /* 边框色：细边框哑光描边 */
+  --color-border: #E2E8F0;         /* 边框色 - 浅钢灰 */
+  --color-border-light: #EDF2F7;   /* 浅边框 */
+  --color-border-dark: #CBD5E0;    /* 深边框 - 钢灰 */
+  
+  /* 合规色：严格匹配政务要求，但降低30%饱和度，做哑光处理 */
+  --color-success: #1E7E34;        /* 成功绿 - 降低30%饱和度后的#28A745 */
+  --color-warning: #B8860B;        /* 提醒黄 - 使用哑光金，更符合政务风格 */
+  --color-error: #9B2C2C;          /* 警示红 - 深红，更严肃 */
+  
+  /* 字体 - 政务标准字体 */
+  --font-heading: 'Noto Sans SC', 'Microsoft YaHei', '微软雅黑', 'PingFang SC', 'Hiragino Sans GB', sans-serif; /* 标题用思源黑体/微软雅黑 */
+  --font-body: 'Noto Sans SC', 'Microsoft YaHei', '微软雅黑', 'PingFang SC', 'Hiragino Sans GB', sans-serif; /* 正文用思源黑体/微软雅黑 */
+  --font-title: 'Noto Sans SC', 'Microsoft YaHei', '微软雅黑', 'STSong', 'SimSun', serif; /* 政务公文标题用方正小标宋/宋体 */
+  
+  /* 间距 - 等比黄金分割（8px/16px/24px），体现严谨性 */
+  --spacing-xs: 0.5rem;      /* 8px */
+  --spacing-sm: 1rem;        /* 16px */
+  --spacing-md: 1.5rem;      /* 24px */
+  --spacing-lg: 2rem;        /* 32px */
+  --spacing-xl: 3rem;        /* 48px */
+  --spacing-2xl: 4rem;       /* 64px */
+  
+  /* 圆角 - 军事风格：极小圆角，硬朗 */
+  --radius-xs: 1px;
+  --radius-sm: 2px;          /* 2px - 按钮 */
+  --radius-md: 4px;          /* 4px - 卡片 */
+  --radius-lg: 6px;          /* 6px - 大容器 */
+  --radius-xl: 8px;          /* 8px - 模态框 */
+
+  
+  /* 阴影 - 轻微阴影，提升层次感但不夸张，体现"克制的精致" */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 4px 8px rgba(0, 0, 0, 0.08);
+  --shadow-2xl: 0 8px 16px rgba(0, 0, 0, 0.1);
+  
+  /* 边框 - 细边框哑光描边，政务专属 */
+  --border-width: 1px;
+  --border-style: solid;
+  --border-color: var(--color-border);
+  
+  /* 过渡 */
+  --transition-fast: 150ms;
+  --transition-base: 200ms;
+  --transition-slow: 300ms;
+}
+
+/* 基础样式重置 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-body); /* 正文用思源黑体/微软雅黑 */
+  color: var(--color-text);
+  background-color: var(--color-background); /* 浅米灰底色，不用纯白 */
+  line-height: 1.8; /* 政务公文行距：1.8倍行距，更舒适 */
+  font-size: 14px;  /* 正文14px - 政务规范 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* 公文式网格布局：页面分栏严格对齐 */
+  text-align: left;
+}
+
+/* 标题样式 - 政务规范：字号严格分级，无任何字号混乱 */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-title); /* 政务公文标题用方正小标宋/宋体 */
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--color-primary-dark);
+  margin-bottom: var(--spacing-md);
+  /* 标题左对齐，无右对齐 */
+  text-align: left;
+}
+
+h1 { 
+  font-size: 20px;   /* 一级标题 - 严格按政务规范 */
+  font-weight: 700;
+}
+h2 { 
+  font-size: 18px;   /* 二级标题 */
+  font-weight: 600;
+}
+h3 { 
+  font-size: 16px;   /* 三级标题 */
+  font-weight: 600;
+}
+h4 { 
+  font-size: 14px;   /* 四级标题 */
+  font-weight: 600;
+}
+h5 { 
+  font-size: 14px;   /* 五级标题 */
+  font-weight: 500;
+}
+h6 { 
+  font-size: 12px;   /* 六级标题 */
+  font-weight: 500;
+}
+
+/* 链接样式 - 政务风格 */
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--transition-base) ease;
+  /* 链接hover时使用哑光金点缀 */
+}
+
+a:hover {
+  color: var(--color-accent); /* hover时变为哑光金 */
+}
+
+/* 焦点样式（可访问性） */
+*:focus-visible {
+  outline: 3px solid var(--color-cta);
+  outline-offset: 2px;
+}
+
+/* 减少动画（可访问性） */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 工具类 - 政务专属 */
+.text-muted {
+  color: var(--color-text-muted);
+  font-size: 12px; /* 辅助文字12px - 政务规范 */
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* 政务专属卡片样式 - 细边框哑光描边，轻微阴影 */
+.gov-card {
+  background: var(--color-background-light);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--spacing-md);
+  /* 重要模块可加哑光金边框 */
+}
+
+.gov-card-important {
+  border-color: var(--color-accent-light);
+  box-shadow: var(--shadow-lg);
+}
+
+/* 军事风格按钮覆盖 */
+.gov-button {
+  background: var(--color-cta);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm); /* 极小圆角 */
+  padding: 0.6rem 1.25rem; /* 加大 Padding */
+  font-size: 14px;
+  font-weight: 600; /* 加粗字体 */
+  cursor: pointer;
+  transition: all var(--transition-base) ease;
+  box-shadow: 0 2px 0 rgba(0,0,0,0.1); /* 增加底部硬阴影，模拟实体按键 */
+  text-transform: uppercase; /* 大写，更严肃（如果是英文） */
+  letter-spacing: 0.025em; /* 字间距微增 */
+}
+
+.gov-button:hover {
+  background: var(--color-cta-hover);
+  box-shadow: 0 1px 0 rgba(0,0,0,0.1);
+  transform: translateY(1px); /* 按压感 */
+}
+
+/* 帮助文本样式 */
+.gov-help-text {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-top: 0.25rem;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.gov-help-text::before {
+  content: 'i';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  font-size: 10px;
+  font-family: serif;
+  font-style: italic;
+}
+
+/* 军事风格装饰 - 条纹 */
+.mil-stripe {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(10, 36, 99, 0.05),
+    rgba(10, 36, 99, 0.05) 10px,
+    transparent 10px,
+    transparent 20px
+  );
+}
+
+/* 军事风格装饰 - 徽章标记 */
+.mil-badge-mark {
+  position: relative;
+  padding-left: 0.75rem;
+}
+
+.mil-badge-mark::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 70%;
+  background-color: var(--color-accent);
+  border-radius: 1px;
+}
+
+.gov-button-primary {
+  background: var(--color-primary);
+}
+
+.gov-button-accent {
+  background: var(--color-accent);
+}
+
+.gov-button-accent:hover {
+  background: var(--color-accent-hover);
+}
+
+/* 响应式容器 */
+.container-responsive {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container-responsive {
+    max-width: 640px;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .container-responsive {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-responsive {
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container-responsive {
+    max-width: 1280px;
+  }
+}
+
+@media (min-width: 1536px) {
+  .container-responsive {
+    max-width: 1536px;
+  }
+}
+
+/* 政务专属模块样式 - 去除玻璃风格，使用政务专属质感 */
+.gov-module {
+  background: var(--color-background-light);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  /* 无模糊效果，体现政务严谨性 */
+}
+
+/* 政务卡片样式 */
+.gov-card-module {
+  background: var(--color-background-light);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  transition: all var(--transition-base) ease;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
+
+.gov-card-module:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-accent-light); /* hover时边框变哑光金 */
+  transform: translateY(-1px);
+}
+
+/* 重要模块边框 - 使用哑光金 */
+.gov-module-important {
+  border-color: var(--color-accent-light);
+  box-shadow: var(--shadow-lg);
+}
+
+/* 政务按钮 - 去除玻璃效果 */
+.gov-button-module {
+  background: var(--color-background-light);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  transition: all var(--transition-base) ease;
+  cursor: pointer;
+}
+
+.gov-button-module:hover {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+}
+
+/* Element Plus 组件政务专属风格覆盖 - 去除玻璃效果 */
+:deep(.el-card) {
+  background: var(--color-background-light) !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: var(--shadow-md) !important;
+  border-radius: var(--radius-lg) !important;
+  /* 无模糊效果 */
+}
+
+:deep(.el-card__header) {
+  background: var(--color-background);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--spacing-md);
+  font-family: var(--font-title);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+}
+
+:deep(.el-table) {
+  background: var(--color-background-light);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+:deep(.el-table__header-wrapper) {
+  background: var(--color-background);
+  border-bottom: 2px solid var(--color-border);
+  /* 无模糊效果 */
+}
+
+:deep(.el-table__header-wrapper th) {
+  background: var(--color-background) !important;
+  color: var(--color-primary-dark);
+  font-weight: 600;
+  font-family: var(--font-title);
+  font-size: 14px;
+}
+
+:deep(.el-table__body-wrapper tr:hover) {
+  background: rgba(10, 36, 99, 0.05); /* 使用藏青色，降低透明度 */
+}
+
+:deep(.el-input__wrapper) {
+  background: var(--color-background-light);
+  border: 1px solid var(--color-border);
+  box-shadow: none;
+  /* 无模糊效果 */
+}
+
+:deep(.el-input__wrapper:hover) {
+  background: var(--color-background-light);
+  border-color: var(--color-accent-light); /* hover时边框变哑光金 */
+}
+
+:deep(.el-input__wrapper.is-focus) {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(10, 36, 99, 0.1);
+}
+
+:deep(.el-select .el-input__wrapper) {
+  background: var(--color-background-light);
+  border: 1px solid var(--color-border);
+  /* 无模糊效果 */
+}
+
+:deep(.el-button) {
+  transition: all var(--transition-base) ease;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+:deep(.el-button--primary) {
+  background: var(--color-primary) !important; /* 藏青，无渐变 */
+  border: none !important;
+  color: white !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+:deep(.el-button--primary:hover) {
+  background: var(--color-primary-dark) !important; /* 墨蓝 */
+  box-shadow: var(--shadow-md) !important;
+  /* 可选择性加哑光金边框 */
+  border: 1px solid var(--color-accent-light) !important;
+}
+
+/* 响应式表格 */
+@media (max-width: 768px) {
+  :deep(.el-table) {
+    font-size: 0.875rem;
+  }
+  
+  :deep(.el-table th),
+  :deep(.el-table td) {
+    padding: 0.5rem 0.25rem;
+  }
+  
+  :deep(.el-table .cell) {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* 响应式分页 */
+@media (max-width: 640px) {
+  :deep(.el-pagination) {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  :deep(.el-pagination .el-pagination__sizes),
+  :deep(.el-pagination .el-pagination__jump) {
+    margin-top: 0.5rem;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* 响应式表单 */
+@media (max-width: 640px) {
+  :deep(.el-form-item__label) {
+    width: 100% !important;
+    text-align: left;
+    margin-bottom: 0.25rem;
+  }
+  
+  :deep(.el-form-item__content) {
+    width: 100% !important;
+    margin-left: 0 !important;
+  }
+}
+
+/* 响应式卡片 */
+@media (max-width: 640px) {
+  .glass-card {
+    padding: 1rem;
+  }
+  
+  .glass {
+    padding: 1rem;
+  }
+}
+
+/* 政务标签 */
+.gov-tag {
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  border-color: var(--color-border);
+}
+
+.gov-tag-status {
+  font-weight: 600;
+  border: none;
+}
+
+/* 政务分页 */
+.gov-pagination {
+  justify-content: flex-end;
+  font-weight: 500;
+  --el-pagination-button-bg-color: var(--color-background-light);
+  --el-pagination-hover-color: var(--color-primary);
+}
+
+.gov-pagination .el-pager li {
+  background: var(--color-background-light) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-sm) !important;
+  margin: 0 2px !important;
+  font-weight: 500 !important;
+}
+
+.gov-pagination .el-pager li.is-active {
+  background: var(--color-primary) !important;
+  color: white !important;
+  border-color: var(--color-primary) !important;
+}
+
+.gov-pagination .btn-prev,
+.gov-pagination .btn-next {
+  background: var(--color-background-light) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+/* 政务表格覆盖 - 全局 */
+.gov-table {
+  background: transparent !important;
+  --el-table-border-color: var(--color-border);
+  --el-table-header-bg-color: var(--color-background);
+  --el-table-row-hover-bg-color: rgba(10, 36, 99, 0.03);
+}
+
+.gov-table th.el-table__cell {
+  background-color: var(--color-background) !important;
+  color: var(--color-primary-dark);
+  font-weight: 600;
+  font-family: var(--font-title);
+}
+
+.gov-table .el-table__row {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+/* Element Plus MessageBox 政务专属样式 - 全局样式（因为 MessageBox 是动态创建并挂载到 body 的） */
+.el-message-box {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  margin: 0 !important;
+  background: var(--color-background-light) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-xl) !important;
+  padding: 0 !important;
+  overflow: hidden;
+  z-index: 2001 !important;
+  min-width: 420px;
+  max-width: 90%;
+  display: block !important;
+  width: auto !important;
+  /* 无模糊效果 */
+}
+
+.el-message-box__header {
+  position: relative;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  background: var(--color-background);
+  padding: 1.25rem 1.5rem !important;
+  border-bottom: 1px solid var(--color-border);
+  margin: 0 !important;
+  /* 无模糊效果 */
+}
+
+.el-message-box__title {
+  font-family: var(--font-title);
+  font-size: 18px !important; /* 二级标题 */
+  font-weight: 600 !important;
+  color: var(--color-primary-dark) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1.5 !important;
+  flex: 1;
+}
+
+.el-message-box__headerbtn {
+  position: absolute !important;
+  top: 1.25rem !important;
+  right: 1.5rem !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  cursor: pointer !important;
+  font-size: 1rem !important;
+  color: #64748b !important;
+  transition: color 0.2s ease !important;
+}
+
+.el-message-box__headerbtn:hover {
+  color: #334155 !important;
+}
+
+.el-message-box__close {
+  font-size: 1rem !important;
+  color: inherit !important;
+}
+
+.el-message-box__content {
+  padding: 0 !important;
+  background: transparent !important;
+  display: block !important;
+}
+
+.el-message-box__content {
+  padding: 0 !important;
+  background: transparent !important;
+  display: block !important;
+}
+
+/* 注意：实际 DOM 使用的是 el-message-box__container，不是 el-message-box__message-container */
+.el-message-box__container {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  background: transparent !important;
+  padding: 1.5rem !important;
+  margin: 0 !important;
+}
+
+/* 保留 message-container 以防万一 */
+.el-message-box__message-container {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  background: transparent !important;
+  padding: 1.5rem !important;
+  margin: 0 !important;
+}
+
+.el-message-box__status {
+  flex-shrink: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+}
+
+.el-message-box__message {
+  flex: 1 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  color: var(--color-text) !important;
+  font-size: 14px !important; /* 正文14px */
+  line-height: 1.8 !important; /* 政务规范行距 */
+  background: transparent !important;
+  word-wrap: break-word !important;
+  word-break: break-word !important;
+  display: flex !important;
+  align-items: center !important;
+  font-family: var(--font-body);
+}
+
+.el-message-box__message p {
+  background: transparent !important;
+  color: var(--color-text) !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  line-height: 1.8 !important;
+}
+
+.el-message-box__btns {
+  padding: 1rem 1.5rem 1.25rem;
+  background: var(--color-background);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  /* 无模糊效果 */
+}
+
+.el-message-box__btns .el-button {
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.el-message-box__btns .el-button--default {
+  background: var(--color-background-light);
+  border-color: var(--color-border);
+  color: var(--color-text);
+  /* 无模糊效果 */
+}
+
+.el-message-box__btns .el-button--default:hover {
+  background: var(--color-background);
+  border-color: var(--color-accent-light);
+  color: var(--color-primary-dark);
+  box-shadow: var(--shadow-sm);
+}
+
+.el-message-box__btns .el-button--primary {
+  background: var(--color-primary) !important; /* 藏青，无渐变 */
+  border: none !important;
+  color: white !important;
+}
+
+.el-message-box__btns .el-button--primary:hover {
+  background: var(--color-primary-dark) !important; /* 墨蓝 */
+  box-shadow: var(--shadow-md) !important;
+  border: 1px solid var(--color-accent-light) !important;
+}
+
+.el-message-box__btns .el-button--primary:active {
+  transform: translateY(0);
+}
+
+/* 警告类型图标样式 */
+.el-message-box__status.el-message-box-icon--warning {
+  color: #D97706 !important;
+  font-size: 1.5rem !important;
+  flex-shrink: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  vertical-align: middle !important;
+}
+
+.el-message-box-icon--warning .el-icon {
+  font-size: 1.5rem !important;
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+  line-height: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* 消息框遮罩层 - 政务风格，无模糊 */
+.el-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 2000 !important;
+  background: rgba(44, 62, 80, 0.3) !important; /* 深炭灰，降低透明度 */
+  /* 无模糊效果 */
+}
+
+.el-overlay-dialog {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 2000 !important;
+  background: rgba(44, 62, 80, 0.3) !important;
+  /* 无模糊效果 */
+}
+
+/* 响应式调整 */
+@media (max-width: 640px) {
+  .el-message-box {
+    width: calc(100% - 2rem) !important;
+    margin: 1rem !important;
+    min-width: auto;
+  }
+  
+  .el-message-box__header,
+  .el-message-box__message,
+  .el-message-box__btns {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .el-message-box__btns {
+    flex-direction: column;
+  }
+  
+  .el-message-box__btns .el-button {
+    width: 100%;
+  }
+}

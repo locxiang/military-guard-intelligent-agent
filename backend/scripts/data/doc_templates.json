@@ -1,0 +1,34 @@
+[
+  {
+    "name": "立案报告模板",
+    "doc_type": "立案报告",
+    "description": "标准立案报告，含案件线索、初查情况、立案依据等。请上传 .docx 公文文件作为模板。",
+    "file_path": null,
+    "version": 1,
+    "status": 1
+  },
+  {
+    "name": "请示模板",
+    "doc_type": "请示",
+    "description": "向上级请示事项的公文模板。请上传 .docx 公文文件作为模板。",
+    "file_path": null,
+    "version": 1,
+    "status": 1
+  },
+  {
+    "name": "会议纪要模板",
+    "doc_type": "会议纪要",
+    "description": "标准会议纪要格式。请上传 .docx 公文文件作为模板。",
+    "file_path": null,
+    "version": 1,
+    "status": 1
+  },
+  {
+    "name": "工作总结模板",
+    "doc_type": "工作总结",
+    "description": "月度、季度、年度工作总结模板。请上传 .docx 公文文件作为模板。",
+    "file_path": null,
+    "version": 1,
+    "status": 1
+  }
+]

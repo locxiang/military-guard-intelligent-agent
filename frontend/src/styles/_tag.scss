@@ -1,0 +1,98 @@
+// 军事风格主题 - 标签样式
+
+// ==================== Element Plus Tag 标签样式 ====================
+.el-tag,
+.military-theme .el-tag {
+  background: var(--military-bg-card) !important;
+  background-color: var(--military-bg-card) !important;
+  border: 1px solid var(--military-border) !important;
+  color: var(--military-text-primary) !important;
+}
+
+// Tag 不同类型样式
+.el-tag.el-tag--primary,
+.military-theme .el-tag.el-tag--primary {
+  background: rgba(59, 130, 246, 0.2) !important;
+  background-color: rgba(59, 130, 246, 0.2) !important;
+  border-color: var(--military-primary) !important;
+  color: var(--military-primary-light) !important;
+}
+
+.el-tag.el-tag--success,
+.military-theme .el-tag.el-tag--success {
+  background: rgba(16, 185, 129, 0.2) !important;
+  background-color: rgba(16, 185, 129, 0.2) !important;
+  border-color: var(--military-success) !important;
+  color: var(--military-success) !important;
+}
+
+.el-tag.el-tag--warning,
+.military-theme .el-tag.el-tag--warning {
+  background: rgba(245, 158, 11, 0.2) !important;
+  background-color: rgba(245, 158, 11, 0.2) !important;
+  border-color: var(--military-warning) !important;
+  color: var(--military-warning) !important;
+}
+
+.el-tag.el-tag--danger,
+.military-theme .el-tag.el-tag--danger {
+  background: rgba(239, 68, 68, 0.2) !important;
+  background-color: rgba(239, 68, 68, 0.2) !important;
+  border-color: var(--military-error) !important;
+  color: var(--military-error) !important;
+}
+
+.el-tag.el-tag--info,
+.military-theme .el-tag.el-tag--info {
+  background: rgba(59, 130, 246, 0.2) !important;
+  background-color: rgba(59, 130, 246, 0.2) !important;
+  border-color: var(--military-info) !important;
+  color: var(--military-info) !important;
+}
+
+// Tag 文字颜色
+.el-tag .el-tag__content,
+.military-theme .el-tag .el-tag__content {
+  color: inherit !important;
+}
+
+.el-tag__text,
+.military-theme .el-tag__text {
+  color: inherit !important;
+}
+
+// 全局标签覆盖
+.military-theme .gov-tag {
+  background: var(--military-bg-card) !important;
+  border: 1px solid var(--military-border) !important;
+  color: var(--military-text-primary) !important;
+}
+
+// ==================== Badge 徽章样式 ====================
+.el-badge,
+.military-theme .el-badge {
+  display: inline-flex;
+  align-items: center;
+}
+
+.el-badge__content,
+.military-theme .el-badge__content {
+  background: var(--military-error) !important;
+  border-color: var(--military-error) !important;
+  color: var(--military-text-primary) !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  min-width: 18px !important;
+  height: 18px !important;
+  line-height: 18px !important;
+  padding: 0 5px !important;
+  border-radius: 9px !important;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3) !important;
+}
+
+.el-badge__content.is-fixed,
+.military-theme .el-badge__content.is-fixed {
+  top: 0 !important;
+  right: 0 !important;
+  transform: translate(50%, -50%) !important;
+}

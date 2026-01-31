@@ -1,0 +1,17 @@
+// 军事风格主题 - 主入口文件
+// 统一深色军事风格设计系统
+
+// 使用 @use 替代 @import（Dart Sass 3.0 要求）
+@use 'variables' as *;
+@use 'base' as *;
+@use 'card' as *;
+@use 'button' as *;
+@use 'input' as *;
+@use 'table' as *;
+@use 'select' as *;
+@use 'tag' as *;
+@use 'dialog' as *;
+@use 'dropdown' as *;
+@use 'form' as *;
+@use 'pagination' as *;
+@use 'radio' as *;

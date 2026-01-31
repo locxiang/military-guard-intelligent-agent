@@ -1,0 +1,634 @@
+/* 政务专属组件样式库 - 统一的高端设计系统 */
+
+/* ==================== 按钮样式 ==================== */
+/* 主要按钮 - 严肃、正式、更大 */
+.gov-button-primary {
+  height: 44px;
+  padding: 0 24px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: var(--font-title);
+  letter-spacing: 0.5px;
+  background-color: var(--color-primary);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 2px 4px rgba(10, 36, 99, 0.2);
+  color: white;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.gov-button-primary:hover {
+  background-color: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+  box-shadow: 0 4px 8px rgba(10, 36, 99, 0.3);
+  transform: translateY(-1px);
+}
+
+.gov-button-primary:active {
+  background-color: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+  box-shadow: 0 1px 2px rgba(10, 36, 99, 0.2);
+  transform: translateY(0);
+}
+
+.gov-button-primary:disabled {
+  background-color: var(--color-text-muted);
+  border-color: var(--color-text-muted);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* 次要按钮 */
+.gov-button-default {
+  height: 40px;
+  padding: 0 20px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  background-color: var(--color-background-light);
+  border: 1.5px solid var(--color-border-dark);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.gov-button-default:hover {
+  background-color: var(--color-background);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.gov-button-default:active {
+  background-color: var(--color-background-light);
+  box-shadow: none;
+}
+
+/* 危险按钮 */
+.gov-button-danger {
+  height: 44px;
+  padding: 0 24px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: var(--font-title);
+  letter-spacing: 0.5px;
+  background-color: var(--color-error);
+  border: 2px solid var(--color-error);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 2px 4px rgba(160, 40, 26, 0.2);
+  color: white;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.gov-button-danger:hover {
+  background-color: #8B1A1A;
+  border-color: #8B1A1A;
+  box-shadow: 0 4px 8px rgba(160, 40, 26, 0.3);
+  transform: translateY(-1px);
+}
+
+/* 小按钮 */
+.gov-button-sm {
+  height: 32px;
+  padding: 0 16px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* 大按钮 */
+.gov-button-lg {
+  height: 52px;
+  padding: 0 32px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* ==================== 输入框样式 ==================== */
+.gov-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.gov-input-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+  font-family: var(--font-title);
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.gov-input-help {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin-top: 6px;
+  padding-left: 2px;
+}
+
+.gov-input-help-icon {
+  color: var(--color-text-muted);
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+/* Element Plus 输入框覆盖 */
+.gov-input :deep(.el-input__wrapper) {
+  height: 44px;
+  padding: 0 16px;
+  background-color: var(--color-background);
+  border: 1.5px solid var(--color-border-dark);
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+  transition: all 0.2s ease;
+}
+
+.gov-input :deep(.el-input__wrapper:hover) {
+  border-color: var(--color-primary);
+  background-color: var(--color-background-light);
+}
+
+.gov-input :deep(.el-input__wrapper.is-focus) {
+  border-color: var(--color-primary);
+  border-width: 2px;
+  box-shadow: 0 0 0 3px rgba(10, 36, 99, 0.1);
+  background-color: #fff;
+}
+
+.gov-input :deep(.el-input__inner) {
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 400;
+  height: 44px;
+  line-height: 44px;
+}
+
+.gov-input :deep(.el-input__inner::placeholder) {
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+/* 选择框样式 */
+.gov-select :deep(.el-input__wrapper) {
+  height: 44px;
+  padding: 0 16px;
+  background-color: var(--color-background);
+  border: 1.5px solid var(--color-border-dark);
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+  transition: all 0.2s ease;
+}
+
+.gov-select :deep(.el-input__wrapper:hover) {
+  border-color: var(--color-primary);
+  background-color: var(--color-background-light);
+}
+
+.gov-select :deep(.el-input__wrapper.is-focus) {
+  border-color: var(--color-primary);
+  border-width: 2px;
+  box-shadow: 0 0 0 3px rgba(10, 36, 99, 0.1);
+}
+
+/* ==================== 卡片样式 ==================== */
+.gov-card {
+  background-color: var(--color-background-light);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-md);
+  transition: all 0.2s ease;
+}
+
+.gov-card:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: var(--color-border-dark);
+}
+
+.gov-card-header {
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.gov-card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  font-family: var(--font-title);
+  margin: 0;
+}
+
+.gov-card-subtitle {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
+
+/* ==================== 表格样式 ==================== */
+.gov-table :deep(.el-table) {
+  background-color: var(--color-background-light);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.gov-table :deep(.el-table__header-wrapper th) {
+  background-color: var(--color-background) !important;
+  color: var(--color-primary-dark);
+  font-weight: 700;
+  font-family: var(--font-title);
+  font-size: 14px;
+  border-bottom: 2px solid var(--color-border-dark);
+  padding: 12px 16px;
+}
+
+.gov-table :deep(.el-table__body-wrapper tr) {
+  background-color: var(--color-background-light);
+}
+
+.gov-table :deep(.el-table__body-wrapper tr:hover) {
+  background-color: rgba(10, 36, 99, 0.05);
+}
+
+.gov-table :deep(.el-table__body-wrapper td) {
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--color-text);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* ==================== 表单样式 ==================== */
+.gov-form-item {
+  margin-bottom: 20px;
+}
+
+.gov-form-item :deep(.el-form-item__label) {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+  font-family: var(--font-title);
+  padding-bottom: 8px;
+}
+
+.gov-form-item :deep(.el-form-item__error) {
+  color: var(--color-error);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* ==================== 帮助文字样式 ==================== */
+.gov-help-text {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin-top: 6px;
+  padding: 8px 12px;
+  background-color: rgba(10, 36, 99, 0.02);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-sm);
+}
+
+.gov-help-text-small {
+  font-size: 11px;
+  padding: 6px 10px;
+  margin-top: 4px;
+}
+
+.gov-help-text-icon {
+  color: var(--color-text-muted);
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+/* ==================== 帮助提示图标（Tooltip形式） ==================== */
+.gov-help-icon-tooltip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: var(--color-text-muted);
+  cursor: help;
+  transition: color 0.2s ease;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
+.gov-help-icon-tooltip:hover {
+  color: var(--color-primary);
+}
+
+.gov-help-icon-tooltip .el-icon {
+  font-size: 14px;
+}
+
+/* 简短的帮助文字（保留） */
+.gov-help-text-short {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  margin-left: 4px;
+}
+
+.gov-help-text-short .el-icon {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+/* ==================== 标签样式 ==================== */
+.gov-tag {
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border-dark);
+  color: var(--color-text);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: var(--radius-sm);
+}
+
+.gov-tag-primary {
+  background-color: rgba(10, 36, 99, 0.1);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+/* ==================== 分页样式 ==================== */
+.gov-pagination :deep(.el-pagination) {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+}
+
+.gov-pagination :deep(.el-pagination button) {
+  height: 36px;
+  min-width: 36px;
+  border: 1.5px solid var(--color-border-dark);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-background-light);
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.gov-pagination :deep(.el-pagination button:hover) {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.gov-pagination :deep(.el-pagination .number) {
+  height: 36px;
+  min-width: 36px;
+  border: 1.5px solid var(--color-border-dark);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-background-light);
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.gov-pagination :deep(.el-pagination .number.is-active) {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: white;
+}
+
+/* ==================== 消息提示样式 ==================== */
+.gov-message-box {
+  background-color: var(--color-background-light);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  padding: 20px;
+}
+
+.gov-message-box-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  font-family: var(--font-title);
+  margin-bottom: 12px;
+}
+
+.gov-message-box-content {
+  font-size: 14px;
+  color: var(--color-text);
+  line-height: 1.8;
+}
+
+/* ==================== 加载状态 ==================== */
+.gov-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+
+.gov-loading-text {
+  margin-top: 12px;
+  color: var(--color-text-muted);
+}
+
+/* ==================== 空状态 ==================== */
+.gov-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: var(--color-text-muted);
+}
+
+.gov-empty-icon {
+  font-size: 48px;
+  color: var(--color-border-dark);
+  margin-bottom: 16px;
+}
+
+.gov-empty-text {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  margin-top: 8px;
+}
+
+/* ==================== 工具类 ==================== */
+.gov-text-primary {
+  color: var(--color-primary);
+}
+
+.gov-text-primary-dark {
+  color: var(--color-primary-dark);
+}
+
+.gov-text-muted {
+  color: var(--color-text-muted);
+}
+
+.gov-bg-background {
+  background-color: var(--color-background);
+}
+
+.gov-bg-background-light {
+  background-color: var(--color-background-light);
+}
+
+/* ==================== 描述列表样式 ==================== */
+.gov-descriptions :deep(.el-descriptions__header) {
+  margin-bottom: 16px;
+}
+
+.gov-descriptions :deep(.el-descriptions__title) {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  font-family: var(--font-title);
+}
+
+.gov-descriptions :deep(.el-descriptions__table) {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.gov-descriptions :deep(.el-descriptions__label) {
+  background-color: var(--color-background);
+  color: var(--color-primary-dark);
+  font-weight: 600;
+  font-family: var(--font-title);
+  font-size: 14px;
+  border-right: 1px solid var(--color-border);
+  padding: 12px 16px;
+}
+
+.gov-descriptions :deep(.el-descriptions__content) {
+  background-color: var(--color-background-light);
+  color: var(--color-text);
+  font-size: 14px;
+  padding: 12px 16px;
+}
+
+.gov-descriptions :deep(.el-descriptions__table td),
+.gov-descriptions :deep(.el-descriptions__table th) {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.gov-descriptions :deep(.el-descriptions__table tr:last-child td) {
+  border-bottom: none;
+}
+
+/* ==================== 上传组件样式 ==================== */
+.gov-upload-area :deep(.el-upload) {
+  width: 100%;
+}
+
+.gov-upload-area :deep(.el-upload-dragger) {
+  width: 100%;
+  background-color: var(--color-background-light);
+  border: 2px dashed var(--color-border-dark);
+  border-radius: var(--radius-lg);
+  padding: 40px 20px;
+  transition: all 0.3s ease;
+}
+
+.gov-upload-area :deep(.el-upload-dragger:hover) {
+  border-color: var(--color-primary);
+  background-color: var(--color-background);
+}
+
+.gov-upload-area :deep(.el-upload-dragger.is-dragover) {
+  border-color: var(--color-primary);
+  background-color: rgba(10, 36, 99, 0.05);
+}
+
+/* ==================== 进度条样式 ==================== */
+.gov-progress :deep(.el-progress-bar__outer) {
+  background-color: var(--color-background);
+  border-radius: var(--radius-sm);
+}
+
+.gov-progress :deep(.el-progress-bar__inner) {
+  border-radius: var(--radius-sm);
+}
+
+/* ==================== 时间线样式 ==================== */
+.gov-timeline :deep(.el-timeline-item__timestamp) {
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.gov-timeline :deep(.el-timeline-item__node) {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.gov-timeline :deep(.el-timeline-item__tail) {
+  border-color: var(--color-border);
+}
+
+.gov-card-interactive {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.gov-card-interactive:hover {
+  border-color: var(--color-accent-light);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* ==================== Element Plus 全局覆盖 ==================== */
+:deep(.el-button--primary) {
+  background-color: var(--color-primary) !important;
+  border: 2px solid var(--color-primary) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px !important;
+  height: 44px !important;
+  font-size: 15px !important;
+}
+
+:deep(.el-button--primary:hover) {
+  background-color: var(--color-primary-dark) !important;
+  border-color: var(--color-primary-dark) !important;
+}
+
+:deep(.el-button--danger) {
+  background-color: var(--color-error) !important;
+  border: 2px solid var(--color-error) !important;
+  font-weight: 700 !important;
+  height: 44px !important;
+}
+
+:deep(.el-button--default) {
+  background-color: var(--color-background-light) !important;
+  border: 1.5px solid var(--color-border-dark) !important;
+  color: var(--color-text) !important;
+  font-weight: 600 !important;
+  height: 40px !important;
+}
+
+:deep(.el-button--default:hover) {
+  background-color: var(--color-background) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-primary) !important;
+}

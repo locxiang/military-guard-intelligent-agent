@@ -1,0 +1,183 @@
+// 军事风格主题 - 选择器样式
+
+// ==================== Element Plus Select 选择器样式 ====================
+// 覆盖 Element Plus 的 CSS 变量
+.el-select,
+.el-select-v2 {
+  --el-fill-color-blank: var(--military-bg-input) !important;
+  --el-text-color-regular: var(--military-text-primary) !important;
+  --el-border-color: var(--military-border) !important;
+  --el-border-color-hover: var(--military-border-hover) !important;
+}
+
+// Select 输入框容器 - 高优先级选择器
+.el-select .el-select__wrapper,
+.el-select-v2 .el-select-v2__wrapper,
+div.el-select .el-select__wrapper,
+.military-theme .el-select .el-select__wrapper {
+  background: var(--military-bg-input) !important;
+  background-color: var(--military-bg-input) !important;
+  border: 2px solid var(--military-border) !important;
+  border-radius: var(--military-radius-md) !important;
+  color: var(--military-text-primary) !important;
+  box-shadow: none !important;
+  min-height: 32px !important;
+}
+
+.el-select .el-select__wrapper:hover,
+.el-select-v2 .el-select-v2__wrapper:hover,
+div.el-select .el-select__wrapper:hover,
+.military-theme .el-select .el-select__wrapper:hover {
+  background: var(--military-bg-input-hover) !important;
+  background-color: var(--military-bg-input-hover) !important;
+  border-color: var(--military-border-hover) !important;
+}
+
+.el-select .el-select__wrapper.is-focused,
+.el-select .el-select__wrapper:focus,
+.el-select-v2 .el-select-v2__wrapper.is-focused,
+div.el-select .el-select__wrapper.is-focused,
+.military-theme .el-select .el-select__wrapper.is-focused {
+  background: var(--military-bg-input-focus) !important;
+  background-color: var(--military-bg-input-focus) !important;
+  border-color: var(--military-border-focus) !important;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15) !important;
+}
+
+// Select 占位符和选中项文字
+.el-select .el-select__placeholder,
+.el-select .el-select__selected-item,
+.military-theme .el-select .el-select__placeholder,
+.military-theme .el-select .el-select__selected-item {
+  color: var(--military-text-primary) !important;
+}
+
+.el-select .el-select__placeholder span,
+.el-select .el-select__selected-item span {
+  color: var(--military-text-primary) !important;
+}
+
+// Select 输入框
+.el-select .el-select__input,
+.military-theme .el-select .el-select__input {
+  color: var(--military-text-primary) !important;
+}
+
+// Select 箭头图标
+.el-select .el-select__caret,
+.el-select .el-select__icon,
+.el-select .el-select__suffix .el-icon,
+.military-theme .el-select .el-select__caret,
+.military-theme .el-select .el-select__icon {
+  color: var(--military-text-primary) !important;
+}
+
+// Select 下拉面板容器
+.el-select-dropdown,
+.el-select-dropdown.el-popper,
+.el-select-dropdown.el-popper.is-light,
+.el-select-dropdown.el-popper.is-pure.is-light {
+  background: var(--military-bg-card) !important;
+  border: 1px solid var(--military-border) !important;
+  box-shadow: var(--military-shadow-xl) !important;
+  border-radius: var(--military-radius-lg) !important;
+  backdrop-filter: blur(20px) !important;
+  padding: 0 !important;
+}
+
+// Select 下拉列表滚动区域
+.el-select-dropdown .el-scrollbar__view,
+.el-select-dropdown__list {
+  background: transparent !important;
+  padding: 0.5rem !important;
+}
+
+// Select 选项项
+.el-select-dropdown__item {
+  color: var(--military-text-primary) !important;
+  background: transparent !important;
+  border-radius: var(--military-radius-sm) !important;
+  padding: 8px 12px !important;
+  margin-bottom: 2px !important;
+  transition: all var(--military-transition) !important;
+  height: auto !important;
+  line-height: 1.5 !important;
+}
+
+.el-select-dropdown__item:last-child {
+  margin-bottom: 0 !important;
+}
+
+.el-select-dropdown__item:hover,
+.el-select-dropdown__item.hover {
+  background: rgba(59, 130, 246, 0.2) !important;
+  color: var(--military-primary) !important;
+}
+
+.el-select-dropdown__item.selected,
+.el-select-dropdown__item.is-selected {
+  background: rgba(59, 130, 246, 0.3) !important;
+  color: var(--military-primary) !important;
+  font-weight: 600 !important;
+}
+
+.el-select-dropdown__item.is-disabled {
+  color: var(--military-text-disabled) !important;
+  cursor: not-allowed !important;
+}
+
+.el-select-dropdown__item.is-disabled:hover {
+  background: transparent !important;
+  color: var(--military-text-disabled) !important;
+}
+
+// Select 选项组标题
+.el-select-group__title {
+  color: var(--military-text-muted) !important;
+  padding: 8px 12px !important;
+  font-size: 12px !important;
+}
+
+// Select 空状态
+.el-select-dropdown__empty {
+  color: var(--military-text-muted) !important;
+  padding: 20px !important;
+}
+
+// Select 标签样式（多选时）
+.el-select .el-tag,
+.military-theme .el-select .el-tag {
+  background: rgba(59, 130, 246, 0.2) !important;
+  border-color: var(--military-border) !important;
+  color: var(--military-text-primary) !important;
+}
+
+.el-select .el-tag .el-tag__close {
+  color: var(--military-text-primary) !important;
+  background: transparent !important;
+}
+
+.el-select .el-tag .el-tag__close:hover {
+  background: rgba(239, 68, 68, 0.3) !important;
+  color: var(--military-error) !important;
+}
+
+.military-theme .el-select .el-input__wrapper {
+  background: var(--military-bg-input) !important;
+  border: 2px solid var(--military-border) !important;
+  color: var(--military-text-primary) !important;
+}
+
+.military-theme .el-select .el-input__wrapper:hover {
+  background: var(--military-bg-input-hover) !important;
+  border-color: var(--military-border-hover) !important;
+}
+
+.military-theme .el-select .el-input__wrapper.is-focus {
+  background: var(--military-bg-input-focus) !important;
+  border-color: var(--military-border-focus) !important;
+}
+
+.military-theme .el-select .el-input__inner {
+  color: var(--military-text-primary) !important;
+}

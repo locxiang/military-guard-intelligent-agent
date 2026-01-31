@@ -1,0 +1,10 @@
+[
+  {
+    "username": "admin",
+    "password_hash": "$2b$12$YICFEPBD8qhDKlCleSnM8eC2wdhEMpS43GJaRrbJmDc3ltFHZfUUu",
+    "real_name": "系统管理员",
+    "department": null,
+    "role": "admin",
+    "status": 1
+  }
+]

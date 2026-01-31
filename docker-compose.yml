@@ -1,0 +1,132 @@
+services:
+  # MySQL数据库服务
+  mysql:
+    image: mysql:8.0
+    container_name: military-guard-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_password}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-military_guard}
+      MYSQL_USER: ${MYSQL_USER:-user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-password}
+      TZ: Asia/Shanghai
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+    networks:
+      - military-guard-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-root_password}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --init-connect="SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
+
+  # 后端服务 (FastAPI)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: military-guard-backend
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 90s
+    environment:
+      # 数据库配置
+      DATABASE_URL: mysql+pymysql://${MYSQL_USER:-user}:${MYSQL_PASSWORD:-password}@mysql:3306/${MYSQL_DATABASE:-military_guard}
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_USER: ${MYSQL_USER:-user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-password}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-military_guard}
+      # 应用配置
+      APP_NAME: ${APP_NAME:-保卫核心业务智能体}
+      APP_ENV: ${APP_ENV:-development}
+      DEBUG: ${DEBUG:-True}
+      SECRET_KEY: ${SECRET_KEY:-dev-secret-key-change-in-production}
+      # 文件上传配置
+      UPLOAD_DIR: /app/uploads
+      MAX_UPLOAD_SIZE: ${MAX_UPLOAD_SIZE:-524288000}
+      # JWT配置
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-dev-jwt-secret-key}
+      JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
+      JWT_EXPIRE_MINUTES: ${JWT_EXPIRE_MINUTES:-30}
+      # OCR配置
+      TESSERACT_LANG: ${TESSERACT_LANG:-chi_sim+eng}
+      # AI 模型配置（通义千问）
+      DASHSCOPE_API_KEY: ${DASHSCOPE_API_KEY:-}
+      # CORS配置 - 允许前端访问
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173}
+      # Python环境
+      PYTHONUNBUFFERED: 1
+      TZ: Asia/Shanghai
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    volumes:
+      - ./backend:/app
+      - ./data/uploads:/app/uploads
+      - ./data/logs:/app/logs
+    networks:
+      - military-guard-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+    command: sh -c "pip install -r requirements.txt && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
+
+  # 前端服务 (Vue3 + Vite)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: military-guard-frontend
+    restart: unless-stopped
+    environment:
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-/api/v1}
+      VITE_APP_TITLE: ${VITE_APP_TITLE:-保卫核心业务智能体}
+      DOCKER_ENV: "true"
+      NODE_ENV: development
+      CI: "true"
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.vite
+    networks:
+      - military-guard-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    command: sh -c "pnpm install && pnpm dev --host 0.0.0.0 --port 5173"
+
+  # phpMyAdmin 数据库管理工具
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: military-guard-phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: ${MYSQL_USER:-user}
+      PMA_PASSWORD: ${MYSQL_PASSWORD:-password}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_password}
+      UPLOAD_LIMIT: 300M
+      TZ: Asia/Shanghai
+    ports:
+      - "${PHPMYADMIN_PORT:-8080}:80"
+    networks:
+      - military-guard-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+networks:
+  military-guard-network:
+    driver: bridge
