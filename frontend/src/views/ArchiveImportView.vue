@@ -439,9 +439,7 @@ import {
   Promotion,
   ArrowRight
 } from '@element-plus/icons-vue'
-// 演示模式：不需要后端API
-// import { caseFileApi } from '@/api/archive'
-// import { ocrApi } from '@/api/ocr'
+import { caseFileApi } from '@/api/archive'
 
 // 文件列表
 const fileList = ref<any[]>([])
@@ -655,39 +653,25 @@ const handleClearFiles = () => {
 // 延时函数
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
-// 模拟单个文件处理
-const simulateFileProcess = async (fileIndex: number, stage: string) => {
-  const file = processingFiles.value[fileIndex]
-  if (!file) return
-  
-  file.status = 'processing'
-  file.statusText = stage === 'upload' ? '上传中' : stage === 'parse' ? '解析中' : '分析中'
-  file.statusType = 'warning'
-  file.progress = 0
-  
-  // 模拟进度
-  const steps = 5
-  for (let i = 1; i <= steps; i++) {
-    await delay(100 + Math.random() * 200)
-    file.progress = Math.min(100, Math.round((i / steps) * 100))
-  }
-  
-  file.status = 'completed'
-  file.statusText = stage === 'upload' ? '已上传' : stage === 'parse' ? '已解析' : '已分析'
-  file.statusType = 'success'
-  file.progress = 100
+// 根据 SSE 阶段返回当前文件状态文案
+const getFileStatusByStage = (stage: string, progress?: number): { text: string; type: string } => {
+  if (stage === 'upload') return { text: progress === 100 ? '已上传' : '上传中', type: progress === 100 ? 'success' : 'warning' }
+  if (stage === 'parse') return { text: progress === 100 ? '已解析' : '解析中', type: progress === 100 ? 'success' : 'warning' }
+  if (stage === 'analyze') return { text: progress === 100 ? '已分析' : '分析中', type: progress === 100 ? 'success' : 'warning' }
+  if (stage === 'complete') return { text: '已导入', type: 'success' }
+  return { text: '处理中', type: 'warning' }
 }
 
-// 开始导入 - 演示模式
+// 开始导入 - 使用 SSE 流式接口，四阶段：上传 → 解析 → 智能分析 → 完成
 const handleStartImport = async () => {
   if (fileList.value.length === 0) {
     ElMessage.warning('请先选择要导入的案件文件')
     return
   }
 
+  const batchName = importForm.batchName.trim() || `批次_${new Date().toLocaleDateString('zh-CN').replace(/\//g, '')}_${Math.floor(Math.random() * 1000)}`
   if (!importForm.batchName.trim()) {
-    // 自动生成批次名称
-    importForm.batchName = `批次_${new Date().toLocaleDateString('zh-CN').replace(/\//g, '')}_${Math.floor(Math.random() * 1000)}`
+    importForm.batchName = batchName
   }
 
   importing.value = true
@@ -696,128 +680,109 @@ const handleStartImport = async () => {
   importProgress.status = ''
   importProgress.total = fileList.value.length
   importProgress.uploaded = 0
-
-  // 初始化处理文件列表
+  currentStage.value = 'upload'
   processingFiles.value = fileList.value.map(file => ({
     name: file.name,
-    status: 'pending' as const,
-    statusText: '等待处理',
-    statusType: 'info',
+    status: 'processing' as const,
+    statusText: '上传中',
+    statusType: 'warning',
     progress: 0
   }))
 
+  const formData = new FormData()
+  fileList.value.forEach((file, idx) => {
+    const raw = (file as any).raw || file
+    if (raw instanceof File) {
+      formData.append('files', raw)
+    }
+  })
+  if (formData.getAll('files').length === 0) {
+    ElMessage.warning('没有可上传的文件（请确认选择的是本地文件）')
+    importing.value = false
+    return
+  }
+
   try {
-    // ========== 阶段1: 上传文件 ==========
-    currentStage.value = 'upload'
-    importProgress.percentage = 0
-    
-    for (let i = 0; i < processingFiles.value.length; i++) {
-      await simulateFileProcess(i, 'upload')
-      importProgress.uploaded = i + 1
-      importProgress.percentage = Math.round(((i + 1) / processingFiles.value.length) * 100)
-    }
-    
-    await delay(300)
+    const res = await caseFileApi.importStream(
+      formData,
+      { taskName: batchName, sourceDepartment: importForm.sourceDepartment || undefined },
+      (data) => {
+        const stage = data.stage
+        const fileIndex = data.fileIndex ?? 0
+        const total = data.total ?? importProgress.total
 
-    // ========== 阶段2: 解析内容 ==========
-    currentStage.value = 'parse'
-    importProgress.percentage = 0
-    importProgress.uploaded = 0
-    
-    // 重置文件状态
-    processingFiles.value.forEach(f => {
-      f.status = 'pending'
-      f.statusText = '等待解析'
-      f.statusType = 'info'
-      f.progress = 0
-    })
-    
-    for (let i = 0; i < processingFiles.value.length; i++) {
-      await simulateFileProcess(i, 'parse')
-      importProgress.uploaded = i + 1
-      importProgress.percentage = Math.round(((i + 1) / processingFiles.value.length) * 100)
-    }
-    
-    await delay(300)
+        if (stage) {
+          currentStage.value = stage
+          importProgress.total = total
+        }
 
-    // ========== 阶段3: 智能分析 ==========
-    currentStage.value = 'analyze'
-    importProgress.percentage = 0
-    importProgress.uploaded = 0
-    
-    // 重置文件状态
-    processingFiles.value.forEach(f => {
-      f.status = 'pending'
-      f.statusText = '等待分析'
-      f.statusType = 'info'
-      f.progress = 0
-    })
-    
-    for (let i = 0; i < processingFiles.value.length; i++) {
-      await simulateFileProcess(i, 'analyze')
-      importProgress.uploaded = i + 1
-      importProgress.percentage = Math.round(((i + 1) / processingFiles.value.length) * 100)
-    }
-    
-    await delay(300)
+        const file = processingFiles.value[fileIndex]
+        if (file && stage) {
+          if (stage === 'complete') {
+            file.status = data.success ? 'completed' : 'completed'
+            file.statusText = data.success ? '已导入' : (data.reason || '失败')
+            file.statusType = data.success ? 'success' : 'danger'
+            file.progress = 100
+            importProgress.uploaded = processingFiles.value.filter(f => f.status === 'completed').length
+          } else {
+            const { text, type } = getFileStatusByStage(stage, data.progress)
+            file.statusText = text
+            file.statusType = type
+            file.progress = data.progress ?? file.progress
+          }
+        }
 
-    // ========== 阶段4: 完成 ==========
-    currentStage.value = 'complete'
+        if (total > 0 && stage === 'complete') {
+          const done = processingFiles.value.filter(f => f.status === 'completed').length
+          importProgress.percentage = Math.round((done / total) * 100)
+        }
+      }
+    )
+
     importProgress.percentage = 100
     importProgress.status = 'success'
-    importProgress.uploaded = importProgress.total
-
-    ElMessage.success(`案件文件导入成功！共处理 ${importProgress.total} 个文件`)
-
-    // 添加到导入记录（演示数据）
-    const newRecord = {
-      id: Date.now(),
-      batchName: importForm.batchName,
-      taskName: importForm.batchName,
-      status: 'completed',
-      totalFiles: fileList.value.length,
-      successFiles: fileList.value.length,
-      failedFiles: 0,
-      createdAt: new Date().toISOString(),
-      // 文件处理详情
-      files: fileList.value.map((file, index) => ({
-        name: file.name,
-        status: 'completed' as const,
-        progress: 100,
-        size: file.size || 0
-      }))
-    }
-    importRecords.value.unshift(newRecord)
-    
-    // 保存到 localStorage（用于分析进度管理页面同步数据）
-    localStorage.setItem('importRecords', JSON.stringify(importRecords.value))
-
-    // 添加到OCR任务（演示数据 - 仅PDF文件）
-    const pdfFiles = fileList.value.filter(f => f.name.toLowerCase().endsWith('.pdf'))
-    pdfFiles.forEach((file, idx) => {
-      ocrTasks.value.unshift({
-        id: Date.now() + idx,
-        fileName: file.name,
-        status: Math.random() > 0.5 ? 'completed' : 'processing',
-        progress: Math.floor(Math.random() * 100),
-        accuracy: Math.floor(85 + Math.random() * 15),
-        ocrText: `【演示文字识别结果】\n\n文件名：${file.name}\n\n这是模拟的文字识别内容，实际使用时会显示从扫描件中识别出的文字。\n\n案件基本信息：\n- 案件编号：DEMO-${Date.now()}\n- 案件类型：演示案件\n- 涉案人员：张三\n- 案发时间：2025年1月\n\n案件概要：\n本案件为演示案件，展示系统的文字识别功能...`
-      })
+    importProgress.uploaded = res.success_files + res.failed_files
+    importProgress.total = res.total_files
+    currentStage.value = 'complete'
+    processingFiles.value.forEach(f => {
+      if (f.status !== 'completed') {
+        f.status = 'completed'
+        f.statusText = '已导入'
+        f.statusType = 'success'
+        f.progress = 100
+      }
     })
 
-    // 清空表单
+    const successCount = res.success_files ?? 0
+    const failedCount = res.failed_files ?? 0
+    ElMessage.success(
+      successCount > 0
+        ? `导入完成：成功 ${successCount} 个${failedCount > 0 ? `，失败 ${failedCount} 个` : ''}。请到「卷宗审核入库」中审核后入库。`
+        : '导入完成，无成功文件。请检查格式（支持 PDF、DOC、DOCX）。'
+    )
+
+    importRecords.value.unshift({
+      id: res.task_id,
+      batchName,
+      taskName: batchName,
+      status: 'completed',
+      totalFiles: res.total_files,
+      successFiles: successCount,
+      failedFiles: failedCount,
+      createdAt: new Date().toISOString()
+    })
+    loadImportRecords()
+
     fileList.value = []
     importForm.batchName = ''
     importForm.defaultTags = []
     importForm.sourceDepartment = ''
 
-    // 3秒后隐藏进度面板
     setTimeout(() => {
       importProgress.show = false
       processingFiles.value = []
       currentStage.value = ''
     }, 5000)
-
   } catch (error: any) {
     importProgress.status = 'exception'
     ElMessage.error(error?.message || '导入失败')
@@ -879,18 +844,20 @@ const loadOcrTasks = async () => {
 const loadImportRecords = async () => {
   recordsLoading.value = true
   try {
-    // 演示模式：模拟加载延迟
-    await delay(500)
-    // 从 localStorage 读取任务记录（演示模式）
-    const storedRecords = localStorage.getItem('importRecords')
-    if (storedRecords) {
-      importRecords.value = JSON.parse(storedRecords)
-    } else {
-      // 如果没有数据，保持为空
-      importRecords.value = []
-    }
+    const list = await caseFileApi.getImportTasks()
+    importRecords.value = (Array.isArray(list) ? list : []).map((t: any) => ({
+      id: t.id,
+      batchName: t.taskName || '',
+      taskName: t.taskName || '',
+      status: t.status || 'completed',
+      totalFiles: t.totalFiles ?? 0,
+      successFiles: t.successFiles ?? 0,
+      failedFiles: t.failedFiles ?? 0,
+      createdAt: t.createdAt
+    }))
   } catch (error) {
     console.error('加载导入记录失败:', error)
+    importRecords.value = []
   } finally {
     recordsLoading.value = false
   }

@@ -11,6 +11,8 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
+from loguru import logger
+
 from app.core.config import settings
 from app.core.database import get_db
 from app.models.user import User
@@ -137,6 +139,7 @@ async def get_current_user(
     Raises:
         HTTPException: 用户不存在或已被禁用
     """
+    logger.info("get_current_user: 开始校验 Token 与查询用户")
     # 解码 Token
     payload = decode_access_token(token)
     username: str = payload.get("sub")

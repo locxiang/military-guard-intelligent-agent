@@ -161,7 +161,7 @@ ${(statistics.caseTypeDistribution || []).map((item: any) => `<li>${item.name}�
 ${formData.highlights 
   ? formData.highlights.split('\n').map(p => `<p>${p}</p>`).join('')
   : `<p>1. 案件办理效率稳步提升，办结率保持在较高水平；</p>
-     <p>2. 案件分类管理更加规范，档案质量持续改善；</p>
+     <p>2. 卷宗审核入库管理更加规范，档案质量持续改善；</p>
      <p>3. 信息化手段应用更加深入，工作效率明显提高。</p>`
 }
 </div>

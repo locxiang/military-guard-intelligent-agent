@@ -39,7 +39,7 @@
           >
             <el-option label="全部" value="" />
             <el-option label="待审核" value="pending" />
-            <el-option label="已审核" value="reviewed" />
+            <el-option label="审核失败" value="failed" />
             <el-option label="已入库" value="archived" />
           </el-select>
           <el-input
@@ -47,7 +47,7 @@
             placeholder="搜索卷宗名称..."
             clearable
             style="width: 250px"
-            @input="loadData"
+            @input="loadDataDebounced"
           >
             <template #prefix>
               <el-icon><Search /></el-icon>
@@ -60,8 +60,8 @@
             <span class="stat-value text-yellow-600">{{ stats.pending }}</span>
           </div>
           <div class="stat-item">
-            <span class="stat-label">已审核</span>
-            <span class="stat-value text-blue-600">{{ stats.reviewed }}</span>
+            <span class="stat-label">审核失败</span>
+            <span class="stat-value text-red-600">{{ stats.failed }}</span>
           </div>
           <div class="stat-item">
             <span class="stat-label">已入库</span>
@@ -82,7 +82,12 @@
         <p class="gov-card-subtitle">点击卷宗卡片开始审核</p>
       </div>
 
-      <div v-loading="loading" class="archive-list">
+      <div
+        v-loading="loading"
+        element-loading-text="正在加载卷宗列表..."
+        element-loading-background="rgba(10, 22, 40, 0.7)"
+        class="archive-list"
+      >
         <div v-if="archiveList.length === 0" class="empty-state">
           <el-icon :size="48"><FolderOpened /></el-icon>
           <p class="mt-4">暂无待审核卷宗</p>
@@ -95,7 +100,7 @@
             class="archive-card"
             :class="{
               'archive-card-pending': archive.status === 'pending',
-              'archive-card-reviewed': archive.status === 'reviewed',
+              'archive-card-failed': archive.status === 'failed',
               'archive-card-archived': archive.status === 'archived'
             }"
             @click="viewArchiveDetail(archive)"
@@ -105,6 +110,7 @@
                 <el-icon :class="['archive-status-icon', archive.status]">
                   <Clock v-if="archive.status === 'pending'" />
                   <CircleCheck v-else-if="archive.status === 'archived'" />
+                  <Warning v-else-if="archive.status === 'failed'" />
                   <DocumentChecked v-else />
                 </el-icon>
                 <div class="flex-1 min-w-0">
@@ -147,7 +153,9 @@
       v-model="showDetailDialog"
       :title="selectedArchive ? `审核卷宗 - ${selectedArchive.name}` : '卷宗详情'"
       width="95%"
-      :close-on-click-modal="false"
+      :close-on-click-modal="!(saveReviewLoading || archiveLoading || reExtractLoading)"
+      :close-on-press-escape="!(saveReviewLoading || archiveLoading || reExtractLoading)"
+      :show-close="!(saveReviewLoading || archiveLoading)"
       class="archive-detail-dialog"
       top="5vh"
     >
@@ -158,7 +166,18 @@
             <div class="detail-section">
               <div class="section-header">
                 <h3 class="section-title">AI提取的关键信息</h3>
-                <el-tag type="info" size="small">请对照右侧原始文件进行审核</el-tag>
+                <div class="section-header-actions">
+                  <el-tag type="info" size="small">请对照右侧原始文件进行审核</el-tag>
+                  <el-button
+                    type="primary"
+                    size="small"
+                    :loading="reExtractLoading"
+                    @click="handleReExtract"
+                  >
+                    <el-icon><Refresh /></el-icon>
+                    <span>AI 重新生成</span>
+                  </el-button>
+                </div>
               </div>
               
               <el-form :model="reviewForm" label-width="120px" class="review-form">
@@ -410,7 +429,7 @@
                         <el-icon><DocumentCopy /></el-icon>
                         <span>原始文件内容</span>
                       </div>
-                      <el-button type="primary" size="small" :href="'/case1.docx'" download>
+                      <el-button type="primary" size="small" :href="getFilePreviewUrl(selectedArchive)" target="_blank" download>
                         <el-icon><DownloadIcon /></el-icon>
                         <span>下载原始文件</span>
                       </el-button>
@@ -451,12 +470,13 @@
 
       <template #footer>
         <div class="flex justify-between">
-          <el-button @click="showDetailDialog = false">取消</el-button>
+          <el-button @click="showDetailDialog = false" :disabled="saveReviewLoading || archiveLoading">取消</el-button>
           <div class="flex gap-2">
             <el-button
               v-if="selectedArchive?.status === 'pending'"
               @click="handleSaveReview"
               type="primary"
+              :loading="saveReviewLoading"
             >
               保存审核
             </el-button>
@@ -465,6 +485,7 @@
               @click="handleArchive"
               type="success"
               :disabled="!isFormValid"
+              :loading="archiveLoading"
             >
               确认入库
             </el-button>
@@ -476,7 +497,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import {
   Refresh,
@@ -492,9 +513,8 @@ import {
   Close,
   Download as DownloadIcon
 } from '@element-plus/icons-vue'
-
-// 延时函数
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+import { classificationApi } from '@/api/classification'
+import { caseFileApi } from '@/api/archive'
 
 // 加载状态
 const loading = ref(false)
@@ -506,11 +526,11 @@ const searchKeyword = ref('')
 // 卷宗列表
 const archiveList = ref<any[]>([])
 
-// 统计信息
+// 统计信息（从当前列表计算；默认列表只含待审核+审核失败，已入库需切到「已入库」筛选才显示）
 const stats = computed(() => {
   return {
     pending: archiveList.value.filter(a => a.status === 'pending').length,
-    reviewed: archiveList.value.filter(a => a.status === 'reviewed').length,
+    failed: archiveList.value.filter(a => a.status === 'failed').length,
     archived: archiveList.value.filter(a => a.status === 'archived').length
   }
 })
@@ -518,6 +538,11 @@ const stats = computed(() => {
 // 详情对话框
 const showDetailDialog = ref(false)
 const selectedArchive = ref<any>(null)
+// AI 重新生成加载状态
+const reExtractLoading = ref(false)
+// 保存审核、确认入库加载状态（避免重复提交并给出反馈）
+const saveReviewLoading = ref(false)
+const archiveLoading = ref(false)
 
 // 审核表单
 const reviewForm = ref({
@@ -602,17 +627,49 @@ const getLevel3Options = (level2: string) => {
   return options[level2] || []
 }
 
-// 获取文件预览URL
+// 案卷文件预览 URL（带 token 便于 iframe 预览）
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '/api/v1'
 const getFilePreviewUrl = (archive: any) => {
-  // PDF文件使用public目录下的case2.pdf
-  return window.location.origin + '/case2.pdf'
+  if (!archive?.id) return ''
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+  const base = `${apiBaseUrl.replace(/\/$/, '')}/case-file/file/${archive.id}`
+  return token ? `${base}?token=${encodeURIComponent(token)}` : base
+}
+
+// 将 extractedData 填充到审核表单
+const fillReviewFormFromExtracted = (extracted: Record<string, any>) => {
+  reviewForm.value = {
+    caseName: extracted.caseName || '',
+    incidentTime: extracted.incidentTime || '',
+    incidentUnit: extracted.incidentUnit || '',
+    personName: extracted.personName || '',
+    personGender: extracted.personGender || '',
+    personEthnicity: extracted.personEthnicity || '',
+    personBirthplace: extracted.personBirthplace || '',
+    personEnlistTime: extracted.personEnlistTime || '',
+    personPosition: extracted.personPosition || '',
+    personCategory: extracted.personCategory || '',
+    charge: extracted.charge || '',
+    suicideMethod: extracted.suicideMethod || '',
+    incidentProcess: extracted.incidentProcess || '',
+    investigationProcess: extracted.investigationProcess || '',
+    investigationConclusion: extracted.investigationConclusion || '',
+    causeAndLesson: extracted.causeAndLesson || '',
+    caseFiling: extracted.caseFiling || '',
+    judgment: extracted.judgment || '',
+    classification: {
+      level1: selectedArchive.value?.classification?.level1 ?? '',
+      level2: selectedArchive.value?.classification?.level2 ?? '',
+      level3: selectedArchive.value?.classification?.level3 ?? ''
+    },
+    tags: Array.isArray(selectedArchive.value?.tags) ? [...selectedArchive.value.tags] : [],
+    notes: reviewForm.value.notes
+  }
 }
 
 // 查看卷宗详情
 const viewArchiveDetail = (archive: any) => {
   selectedArchive.value = archive
-  
-  // 初始化审核表单（使用AI提取的数据）
   const extracted = archive.extractedData || {}
   reviewForm.value = {
     caseName: extracted.caseName || '',
@@ -638,62 +695,101 @@ const viewArchiveDetail = (archive: any) => {
       level2: archive.classification?.level2 || '',
       level3: archive.classification?.level3 || ''
     },
-    tags: archive.tags || [],
-    notes: archive.notes || ''
+    tags: Array.isArray(archive.tags) ? [...archive.tags] : [],
+    notes: ''
   }
-  
   showDetailDialog.value = true
 }
+
+// AI 重新生成：根据文档重新提取字段并刷新表单
+const handleReExtract = async () => {
+  if (!selectedArchive.value?.id) return
+  reExtractLoading.value = true
+  try {
+    const res = await caseFileApi.reExtract(selectedArchive.value.id)
+    const data = res?.data ?? res
+    const extracted = data?.extractedData || data
+    if (extracted && typeof extracted === 'object') {
+      fillReviewFormFromExtracted(extracted)
+      if (selectedArchive.value) {
+        selectedArchive.value.extractedData = { ...extracted }
+      }
+      ElMessage.success('已根据文档重新生成字段，请核对后保存或入库')
+    } else {
+      ElMessage.warning('重新生成未返回有效数据')
+    }
+  } catch (error: any) {
+    ElMessage.error(error?.message || error?.response?.data?.message || 'AI 重新生成失败')
+  } finally {
+    reExtractLoading.value = false
+  }
+}
+
+// 构建保存/入库请求体
+const buildReviewBody = () => ({
+  caseName: reviewForm.value.caseName,
+  incidentTime: reviewForm.value.incidentTime,
+  incidentUnit: reviewForm.value.incidentUnit,
+  personName: reviewForm.value.personName,
+  personGender: reviewForm.value.personGender,
+  personEthnicity: reviewForm.value.personEthnicity,
+  personBirthplace: reviewForm.value.personBirthplace,
+  personEnlistTime: reviewForm.value.personEnlistTime,
+  personPosition: reviewForm.value.personPosition,
+  personCategory: reviewForm.value.personCategory,
+  charge: reviewForm.value.charge,
+  suicideMethod: reviewForm.value.suicideMethod,
+  incidentProcess: reviewForm.value.incidentProcess,
+  investigationProcess: reviewForm.value.investigationProcess,
+  investigationConclusion: reviewForm.value.investigationConclusion,
+  causeAndLesson: reviewForm.value.causeAndLesson,
+  caseFiling: reviewForm.value.caseFiling,
+  judgment: reviewForm.value.judgment,
+  classification: reviewForm.value.classification,
+  tags: reviewForm.value.tags
+})
 
 // 保存审核
 const handleSaveReview = async () => {
   if (!selectedArchive.value) return
-  
+  saveReviewLoading.value = true
   try {
-    // 演示模式：更新本地数据
-    const archive = archiveList.value.find(a => a.id === selectedArchive.value.id)
+    await classificationApi.saveReview(selectedArchive.value.id, buildReviewBody())
+    ElMessage.success('审核信息已保存')
+    const archive = archiveList.value.find(a => a.id === selectedArchive.value!.id)
     if (archive) {
       archive.extractedData = { ...reviewForm.value }
       archive.classification = { ...reviewForm.value.classification }
       archive.tags = [...reviewForm.value.tags]
-      archive.notes = reviewForm.value.notes
-      archive.status = 'reviewed'
     }
-    
-    ElMessage.success('审核信息已保存')
     showDetailDialog.value = false
     loadData()
   } catch (error: any) {
-    ElMessage.error(error?.message || '保存失败')
+    ElMessage.error(error?.message || error?.response?.data?.message || '保存失败')
+  } finally {
+    saveReviewLoading.value = false
   }
 }
 
 // 确认入库
 const handleArchive = async () => {
   if (!selectedArchive.value) return
-  
   if (!isFormValid.value) {
     ElMessage.warning('请填写必填字段：卷宗名、发生时间、姓名、事发经过')
     return
   }
-  
+  archiveLoading.value = true
   try {
-    // 演示模式：更新本地数据
-    const archive = archiveList.value.find(a => a.id === selectedArchive.value.id)
-    if (archive) {
-      archive.extractedData = { ...reviewForm.value }
-      archive.classification = { ...reviewForm.value.classification }
-      archive.tags = [...reviewForm.value.tags]
-      archive.notes = reviewForm.value.notes
-      archive.status = 'archived'
-      archive.archivedAt = new Date().toISOString()
-    }
-    
+    await classificationApi.confirmArchive(selectedArchive.value.id, buildReviewBody())
     ElMessage.success('卷宗已成功入库')
+    const archive = archiveList.value.find(a => a.id === selectedArchive.value!.id)
+    if (archive) archive.status = 'archived'
     showDetailDialog.value = false
     loadData()
   } catch (error: any) {
-    ElMessage.error(error?.message || '入库失败')
+    ElMessage.error(error?.message || error?.response?.data?.message || '入库失败')
+  } finally {
+    archiveLoading.value = false
   }
 }
 
@@ -701,7 +797,7 @@ const handleArchive = async () => {
 const getStatusType = (status: string) => {
   const map: Record<string, string> = {
     pending: 'warning',
-    reviewed: 'info',
+    failed: 'danger',
     archived: 'success'
   }
   return map[status] || 'info'
@@ -711,7 +807,7 @@ const getStatusType = (status: string) => {
 const getStatusText = (status: string) => {
   const map: Record<string, string> = {
     pending: '待审核',
-    reviewed: '已审核',
+    failed: '审核失败',
     archived: '已入库'
   }
   return map[status] || status
@@ -770,118 +866,42 @@ const formatDocxText = (text: string) => {
   }).join('')
 }
 
-// 加载数据
+// 加载数据（调用卷宗审核列表接口）
 const loadData = async () => {
   loading.value = true
   try {
-    await delay(500)
-    
-    // 演示数据：从导入任务中生成的卷宗，包含AI提取的数据
-    const demoTasks = [
-      {
-        id: 1001,
-        batchName: '2025年1月卷宗导入批次',
-        files: [
-          {
-            name: '张某案卷宗.pdf',
-            size: 8 * 1024 * 1024,
-            fileType: 'pdf',
-            extractedData: {
-              caseName: '2025-01-15 某部队-现役军人-张某-盗窃案',
-              incidentTime: '2025-01-15 21:30',
-              incidentUnit: '某部队营区',
-              personName: '张某',
-              personGender: '男',
-              personEthnicity: '汉族',
-              personBirthplace: '山东省济南市',
-              personEnlistTime: '2020-03-01',
-              personPosition: '某连队战士',
-              personCategory: '现役军人',
-              charge: '盗窃罪',
-              incidentProcess: '2025年1月15日晚21时许，嫌疑人张某趁夜间值班人员不注意，潜入营区仓库，盗取军用物资若干。',
-              investigationProcess: '接到报案后，保卫部门立即展开调查，通过监控录像和现场勘查，锁定嫌疑人张某。',
-              investigationConclusion: '张某对盗窃行为供认不讳，案件事实清楚，证据确凿。',
-              causeAndLesson: '暴露出营区安全管理存在漏洞，需要加强夜间巡逻和仓库管理。',
-              caseFiling: '2025年1月16日立案',
-              judgment: '待判决'
-            }
-          },
-          {
-            name: '李某案卷宗.docx',
-            size: 12 * 1024 * 1024,
-            fileType: 'docx',
-            ocrText: '案件编号：2025-BW-0012\n案发时间：2025年1月10日\n案发地点：某单位办公室\n\n基本案情：\n2025年1月10日上午，李某在办公室内违规操作，导致重要文件丢失...',
-            extractedData: {
-              caseName: '2025-01-10 某单位-文职人员-李某-违规操作',
-              incidentTime: '2025-01-10 09:00',
-              incidentUnit: '某单位',
-              personName: '李某',
-              personGender: '女',
-              personEthnicity: '汉族',
-              personBirthplace: '北京市',
-              personEnlistTime: '',
-              personPosition: '办公室文员',
-              personCategory: '文职人员',
-              charge: '违规操作',
-              incidentProcess: '2025年1月10日上午，李某在办公室内违规操作计算机系统，导致重要文件丢失。',
-              investigationProcess: '单位保卫部门接到报告后，立即展开调查，调取监控录像和系统日志。',
-              investigationConclusion: '李某承认违规操作，但声称是无意之举。',
-              causeAndLesson: '需要加强员工操作规范培训，完善系统权限管理。',
-              caseFiling: '2025年1月11日立案',
-              judgment: '给予行政警告处分'
-            }
-          }
-        ],
-        createdAt: new Date(Date.now() - 3600000).toISOString()
-      }
-    ]
-    
-    // 生成卷宗列表
-    const archives: any[] = []
-    let archiveId = 1
-    
-    demoTasks.forEach(task => {
-      task.files.forEach((file, index) => {
-        const status = index === 0 ? 'pending' : 'reviewed'
-        archives.push({
-          id: archiveId++,
-          name: file.name,
-          batchName: task.batchName,
-          size: file.size,
-          fileType: file.fileType,
-          status: status,
-          createdAt: task.createdAt,
-          extractedData: file.extractedData,
-          ocrText: file.ocrText,
-          classification: status === 'reviewed' ? {
-            level1: '行政案件',
-            level2: '违规'
-          } : null,
-          tags: status === 'reviewed' ? ['待处理'] : []
-        })
-      })
+    const res = await classificationApi.getPending({
+      page: 1,
+      pageSize: 100,
+      keyword: searchKeyword.value || undefined,
+      status: filterStatus.value || undefined
     })
-    
-    // 应用筛选
-    let filtered = archives
-    if (filterStatus.value) {
-      filtered = filtered.filter(a => a.status === filterStatus.value)
-    }
-    if (searchKeyword.value) {
-      const keyword = searchKeyword.value.toLowerCase()
-      filtered = filtered.filter(a => a.name.toLowerCase().includes(keyword))
-    }
-    
-    archiveList.value = filtered
+    const list = (res as any).data ?? []
+    archiveList.value = list
   } catch (error) {
     console.error('加载数据失败:', error)
+    archiveList.value = []
   } finally {
     loading.value = false
   }
 }
 
+// 搜索防抖：避免输入时频繁请求和 loading 闪烁
+let searchDebounceTimer: ReturnType<typeof setTimeout> | null = null
+const loadDataDebounced = () => {
+  if (searchDebounceTimer) clearTimeout(searchDebounceTimer)
+  searchDebounceTimer = setTimeout(() => {
+    searchDebounceTimer = null
+    loadData()
+  }, 400)
+}
+
 onMounted(() => {
   loadData()
+})
+
+onUnmounted(() => {
+  if (searchDebounceTimer) clearTimeout(searchDebounceTimer)
 })
 </script>
 
@@ -934,9 +954,10 @@ onMounted(() => {
   font-weight: 600;
 }
 
-/* 卷宗列表 */
+/* 卷宗列表：最小高度保证加载时遮罩区域稳定、不跳动 */
 .archive-list {
-  min-height: 400px;
+  min-height: 420px;
+  position: relative;
 }
 
 .archive-grid {
@@ -964,8 +985,8 @@ onMounted(() => {
   border-left: 4px solid #f59e0b;
 }
 
-.archive-card-reviewed {
-  border-left: 4px solid #3b82f6;
+.archive-card-failed {
+  border-left: 4px solid #ef4444;
 }
 
 .archive-card-archived {
@@ -989,8 +1010,8 @@ onMounted(() => {
   color: #f59e0b;
 }
 
-.archive-status-icon.reviewed {
-  color: #3b82f6;
+.archive-status-icon.failed {
+  color: #ef4444;
 }
 
 .archive-status-icon.archived {
@@ -1070,6 +1091,12 @@ onMounted(() => {
   margin-bottom: 16px;
 }
 
+.section-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .section-title {
   color: var(--military-text-primary);
   font-size: 16px;
@@ -1116,13 +1143,6 @@ onMounted(() => {
   background: white;
 }
 
-.docx-text {
-  color: var(--military-text-primary);
-  font-size: 14px;
-  line-height: 1.8;
-  white-space: pre-wrap;
-}
-
 .docx-preview-container {
   display: flex;
   flex-direction: column;
@@ -1155,19 +1175,21 @@ onMounted(() => {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+/* 原始文件预览区：模拟白纸黑字，用 !important 覆盖 .el-dialog__body 的白色文字 */
 .docx-text {
   font-family: 'SimSun', '宋体', 'Times New Roman', serif;
   font-size: 16px;
   line-height: 1.5;
-  color: #000;
+  color: #000 !important;
   text-align: justify;
+  white-space: pre-wrap;
 }
 
 .docx-heading {
   font-size: 18px;
   font-weight: bold;
   margin: 24px 0 12px 0;
-  color: #000;
+  color: #000 !important;
   text-align: left;
 }
 
@@ -1175,7 +1197,7 @@ onMounted(() => {
   font-size: 16px;
   font-weight: 600;
   margin: 16px 0 8px 0;
-  color: #333;
+  color: #333 !important;
   text-align: left;
 }
 
@@ -1183,7 +1205,7 @@ onMounted(() => {
   margin: 12px 0;
   text-indent: 2em;
   line-height: 1.8;
-  color: #000;
+  color: #000 !important;
 }
 
 .docx-paragraph-spacing {
@@ -1258,5 +1280,149 @@ onMounted(() => {
 .detail-left::-webkit-scrollbar-thumb:hover,
 .detail-right::-webkit-scrollbar-thumb:hover {
   background: var(--military-text-muted);
+}
+
+/* 本页所有输入框、选择框、日期框使用主题色背景（避免白色/浅灰） */
+.archive-classification-view :deep(.el-input__wrapper),
+.archive-classification-view :deep(.el-textarea__inner) {
+  background: var(--military-bg-input) !important;
+  background-color: var(--military-bg-input) !important;
+  border-color: var(--military-border) !important;
+  color: var(--military-text-primary) !important;
+  box-shadow: none !important;
+}
+
+.archive-classification-view :deep(.el-input__wrapper:hover),
+.archive-classification-view :deep(.el-textarea__inner:hover) {
+  background: var(--military-bg-input-hover) !important;
+  background-color: var(--military-bg-input-hover) !important;
+  border-color: var(--military-border-hover) !important;
+}
+
+.archive-classification-view :deep(.el-input__wrapper.is-focus),
+.archive-classification-view :deep(.el-textarea__inner:focus) {
+  background: var(--military-bg-input-focus) !important;
+  background-color: var(--military-bg-input-focus) !important;
+  border-color: var(--military-border-focus) !important;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15) !important;
+}
+
+.archive-classification-view :deep(.el-input__inner),
+.archive-classification-view :deep(.el-textarea__inner) {
+  color: var(--military-text-primary) !important;
+  -webkit-text-fill-color: var(--military-text-primary) !important;
+}
+
+.archive-classification-view :deep(.el-input__inner::placeholder),
+.archive-classification-view :deep(.el-textarea__inner::placeholder) {
+  color: var(--military-text-muted) !important;
+  -webkit-text-fill-color: var(--military-text-muted) !important;
+}
+
+/* 选择框 */
+.archive-classification-view :deep(.el-select .el-select__wrapper),
+.archive-classification-view :deep(.el-select .el-input__wrapper) {
+  background: var(--military-bg-input) !important;
+  background-color: var(--military-bg-input) !important;
+  border-color: var(--military-border) !important;
+  color: var(--military-text-primary) !important;
+}
+
+.archive-classification-view :deep(.el-select .el-select__wrapper:hover),
+.archive-classification-view :deep(.el-select .el-input__wrapper:hover) {
+  background: var(--military-bg-input-hover) !important;
+  border-color: var(--military-border-hover) !important;
+}
+
+.archive-classification-view :deep(.el-select .el-select__wrapper.is-focused),
+.archive-classification-view :deep(.el-select .el-input__wrapper.is-focus) {
+  background: var(--military-bg-input-focus) !important;
+  border-color: var(--military-border-focus) !important;
+}
+</style>
+
+<!-- 对话框被挂到 body，需单独覆盖：弹窗内所有输入框使用主题色 -->
+<style>
+.archive-detail-dialog .el-input__wrapper,
+.archive-detail-dialog .el-textarea__inner {
+  background: var(--military-bg-input) !important;
+  background-color: var(--military-bg-input) !important;
+  border-color: var(--military-border) !important;
+  color: var(--military-text-primary) !important;
+  box-shadow: none !important;
+}
+
+.archive-detail-dialog .el-input__wrapper:hover,
+.archive-detail-dialog .el-textarea__inner:hover {
+  background: var(--military-bg-input-hover) !important;
+  background-color: var(--military-bg-input-hover) !important;
+  border-color: var(--military-border-hover) !important;
+}
+
+.archive-detail-dialog .el-input__wrapper.is-focus,
+.archive-detail-dialog .el-textarea__inner:focus {
+  background: var(--military-bg-input-focus) !important;
+  background-color: var(--military-bg-input-focus) !important;
+  border-color: var(--military-border-focus) !important;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15) !important;
+}
+
+.archive-detail-dialog .el-input__inner,
+.archive-detail-dialog .el-textarea__inner {
+  color: var(--military-text-primary) !important;
+  -webkit-text-fill-color: var(--military-text-primary) !important;
+}
+
+.archive-detail-dialog .el-input__inner::placeholder,
+.archive-detail-dialog .el-textarea__inner::placeholder {
+  color: var(--military-text-muted) !important;
+  -webkit-text-fill-color: var(--military-text-muted) !important;
+}
+
+.archive-detail-dialog .el-select .el-select__wrapper,
+.archive-detail-dialog .el-select .el-input__wrapper {
+  background: var(--military-bg-input) !important;
+  background-color: var(--military-bg-input) !important;
+  border-color: var(--military-border) !important;
+  color: var(--military-text-primary) !important;
+}
+
+.archive-detail-dialog .el-select .el-select__wrapper:hover,
+.archive-detail-dialog .el-select .el-input__wrapper:hover {
+  background: var(--military-bg-input-hover) !important;
+  border-color: var(--military-border-hover) !important;
+}
+
+.archive-detail-dialog .el-select .el-select__wrapper.is-focused,
+.archive-detail-dialog .el-select .el-input__wrapper.is-focus {
+  background: var(--military-bg-input-focus) !important;
+  border-color: var(--military-border-focus) !important;
+}
+
+/* 日期选择器 */
+.archive-detail-dialog .el-date-editor .el-input__wrapper {
+  background: var(--military-bg-input) !important;
+  background-color: var(--military-bg-input) !important;
+  border-color: var(--military-border) !important;
+  color: var(--military-text-primary) !important;
+}
+
+.archive-detail-dialog .el-date-editor .el-input__wrapper:hover {
+  background: var(--military-bg-input-hover) !important;
+  border-color: var(--military-border-hover) !important;
+}
+
+.archive-detail-dialog .el-date-editor .el-input__wrapper.is-focus {
+  background: var(--military-bg-input-focus) !important;
+  border-color: var(--military-border-focus) !important;
+}
+
+/* 原始文件预览区：白纸黑字，覆盖 .el-dialog__body 的白色文字 */
+.archive-detail-dialog .docx-document,
+.archive-detail-dialog .docx-text,
+.archive-detail-dialog .docx-heading,
+.archive-detail-dialog .docx-subheading,
+.archive-detail-dialog .docx-paragraph {
+  color: #000 !important;
 }
 </style>

@@ -34,10 +34,84 @@ export interface ClassificationTree {
   }>
 }
 
+/** 卷宗审核列表项（与卷宗审核入库页展示一致） */
+export interface PendingArchiveItem {
+  id: number
+  caseNo: string
+  name: string
+  batchName: string
+  size: number
+  fileType: string
+  status: 'pending' | 'archived'
+  createdAt: string | null
+  extractedData: Record<string, any>
+  ocrText: string
+  classification: { level1?: string; level2?: string; level3?: string }
+  tags: string[]
+}
+
 export const classificationApi = {
-  // 获取待确认分类的案卷列表
-  getPending(params?: { page?: number; pageSize?: number }): Promise<PaginatedResponse<PendingCaseFile>> {
-    return request.get('/classification/pending', { params })
+  // 获取卷宗审核列表（待审核/已入库）
+  getPending(params?: { page?: number; pageSize?: number; keyword?: string; status?: string }): Promise<PaginatedResponse<PendingArchiveItem>> {
+    const query: Record<string, any> = {
+      page: params?.page ?? 1,
+      page_size: params?.pageSize ?? 20
+    }
+    if (params?.keyword) query.keyword = params.keyword
+    if (params?.status) query.status = params.status
+    return request.get('/classification/pending', { params: query })
+  },
+
+  // 保存审核（不改变状态）
+  saveReview(caseFileId: number, body: {
+    caseName?: string
+    incidentTime?: string
+    incidentUnit?: string
+    personName?: string
+    personGender?: string
+    personEthnicity?: string
+    personBirthplace?: string
+    personEnlistTime?: string
+    personPosition?: string
+    personCategory?: string
+    charge?: string
+    suicideMethod?: string
+    incidentProcess?: string
+    investigationProcess?: string
+    investigationConclusion?: string
+    causeAndLesson?: string
+    caseFiling?: string
+    judgment?: string
+    classification?: { level1?: string; level2?: string; level3?: string }
+    tags?: string[]
+  }): Promise<void> {
+    return request.post(`/classification/save-review/${caseFileId}`, body)
+  },
+
+  // 确认入库（审核通过后入库）
+  confirmArchive(caseFileId: number, body: {
+    caseName?: string
+    incidentTime?: string
+    incidentUnit?: string
+    personName?: string
+    personGender?: string
+    personEthnicity?: string
+    personBirthplace?: string
+    personEnlistTime?: string
+    personPosition?: string
+    personCategory?: string
+    charge?: string
+    suicideMethod?: string
+    incidentProcess?: string
+    investigationProcess?: string
+    investigationConclusion?: string
+    causeAndLesson?: string
+    caseFiling?: string
+    judgment?: string
+    classification?: { level1?: string; level2?: string; level3?: string }
+    tags?: string[]
+  }): Promise<void> {
+    return request.post(`/classification/archive/${caseFileId}`, body)
   },
 
   // 获取分类树

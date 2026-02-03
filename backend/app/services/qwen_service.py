@@ -502,6 +502,98 @@ class QwenService:
             logger.error(f"内容审查流式异常: {str(e)}")
             yield f"data: {json.dumps({'error': str(e)})}\n\n"
 
+    def extract_case_fields(self, document_text: str) -> Dict[str, Any]:
+        """
+        从案卷/卷宗正文中提取核心字段，用于导入待审核模块。
+        提取字段与案卷表（CaseFile）对应，便于人工审核后入库。
+
+        Args:
+            document_text: 从文档中解析出的全文（OCR 或 DOCX 提取）
+
+        Returns:
+            成功时返回 success=True 及 fields 字典；失败时返回 success=False 及 error。
+            fields 包含：case_name, incident_time, person_name, person_info, incident_process,
+            investigation_process_and_conclusion, cause_and_lesson, case_filing, judgment,
+            classification_level1, classification_level2, classification_level3 等。
+        """
+        if not self._api_key_configured or not settings.DASHSCOPE_API_KEY:
+            return {"success": False, "error": "DASHSCOPE_API_KEY 未配置，请检查环境变量配置"}
+
+        system_prompt = """你是一位熟悉军队保卫部门案卷管理的专家。请从给定的案卷/卷宗正文中，提取以下核心字段，用于后续人工审核和入库。只输出合法 JSON，不要用 markdown 代码块包裹。
+
+输出格式（字段名使用下划线命名，与数据库一致）：
+{
+  "case_name": "卷宗名，格式：时间+事发单位-人员类别+姓名+涉案罪名(或自杀方式、线索)，若原文无则根据内容归纳",
+  "title": "案卷标题或简要概括",
+  "case_type": "案卷类型，如：刑事案件、行政案件、民事案件、其他",
+  "source_department": "来源部门或事发单位，若未提及则空字符串",
+  "incident_time": "发生时间，格式 YYYY-MM-DD HH:mm 或 YYYY-MM-DD，若只有日期无时间则补 00:00",
+  "person_name": "涉案人员姓名",
+  "person_info": {
+    "gender": "性别",
+    "ethnicity": "民族",
+    "birthplace": "出生地",
+    "enlistment_time": "入伍时间，格式 YYYY-MM-DD",
+    "position": "部职别",
+    "person_category": "人员类别：现役军人、退役军人、文职人员、职工、其他"
+  },
+  "charge": "涉案罪名",
+  "suicide_method": "自杀方式或线索（仅当涉及自杀时填写，否则空字符串）",
+  "incident_process": "事发经过，简要概括或原文关键段落",
+  "investigation_process_and_conclusion": "侦查调查过程及结论（过程与结论可合并）",
+  "cause_and_lesson": "原因教训",
+  "case_filing": "立案情况",
+  "judgment": "判决情况",
+  "classification_level1": "一级分类：刑事案件、行政案件、民事案件、其他",
+  "classification_level2": "二级分类，根据一级推断或原文",
+  "classification_level3": "三级分类，若有则填"
+}
+
+要求：
+1. 所有字段均从正文中提取或合理推断，不要编造原文没有的信息；若某字段无法从文中得出，则填空字符串或 null。
+2. 时间格式统一为 YYYY-MM-DD 或 YYYY-MM-DD HH:mm。
+3. person_info 中未提及的子字段可省略或空字符串。
+4. 直接输出上述 JSON，不要包含任何其他说明文字。"""
+
+        user_prompt = f"""请从以下案卷正文中提取核心字段，按上述 JSON 格式输出。
+
+--- 案卷正文 ---
+{document_text[:15000] if len(document_text) > 15000 else document_text}
+--- 正文结束 ---"""
+
+        try:
+            result = self.generate_text(
+                prompt=user_prompt,
+                system_prompt=system_prompt,
+                temperature=0.3,
+                max_tokens=4000,
+            )
+            if not result.get("success"):
+                return result
+            content = result.get("content", "").strip()
+            if content.startswith("```"):
+                lines = content.split("\n")
+                if lines[0].startswith("```"):
+                    lines = lines[1:]
+                if lines and lines[-1].strip() == "```":
+                    lines = lines[:-1]
+                content = "\n".join(lines)
+            data = json.loads(content)
+            # 确保是字典，且键名为下划线格式
+            if not isinstance(data, dict):
+                return {"success": False, "error": "提取结果格式错误"}
+            return {"success": True, "fields": data}
+        except json.JSONDecodeError as e:
+            logger.warning(f"案卷字段提取返回非 JSON: {e}, raw={content[:500] if content else ''}")
+            return {
+                "success": False,
+                "error": "AI 提取结果解析失败，请重试",
+                "raw": (content[:500] if content else ""),
+            }
+        except Exception as e:
+            logger.error(f"案卷字段提取异常: {str(e)}")
+            return {"success": False, "error": str(e)}
+
 
 # 创建全局服务实例
 qwen_service = QwenService()

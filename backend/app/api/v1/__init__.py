@@ -3,7 +3,7 @@ API v1 路由模块
 """
 from fastapi import APIRouter
 
-from app.api.v1 import auth, archive, doc_generate, knowledge_graph, dashboard, statistics, ocr, classification, user, template, content_review
+from app.api.v1 import auth, archive, doc_generate, knowledge_graph, dashboard, statistics, ocr, classification, user, template, content_review, audit
 
 # 创建 API 路由器
 api_router = APIRouter(prefix="/api/v1")
@@ -18,5 +18,6 @@ api_router.include_router(template.router, prefix="/template", tags=["模板管�
 api_router.include_router(content_review.router, prefix="/content-review", tags=["内容审查"])
 api_router.include_router(knowledge_graph.router, prefix="/knowledge-graph", tags=["知识图谱"])
 api_router.include_router(user.router, prefix="/user", tags=["用户管理"])
+api_router.include_router(audit.router, prefix="/audit", tags=["日志审计"])
 api_router.include_router(dashboard.router, tags=["工作台"])
 api_router.include_router(statistics.router, tags=["统计分析"])

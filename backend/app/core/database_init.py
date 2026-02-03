@@ -12,6 +12,7 @@ from typing import Dict, Optional, Any
 
 from app.core.database import Base, engine
 from app.models import User, CaseFile, ImportTask, DocGenerateTask, OcrTask, DocTemplate
+from app.core.audit import AuditLog  # 确保审计日志表参与 create_all
 
 
 class DatabaseInitializer:
@@ -70,6 +71,10 @@ class DatabaseInitializer:
             # 3. 同步每个表的结构
             await self._sync_all_tables_structure()
             
+            # 4. 结构同步后再次确保主键自增（避免同步时误改 id 或历史表缺自增）
+            async with self.engine.begin() as conn:
+                await self._ensure_primary_key_autoincrement(conn)
+            
             logger.info("✅ 数据库初始化检查完成")
             
         except Exception as e:
@@ -81,33 +86,31 @@ class DatabaseInitializer:
         self.inspector = inspect(conn)
     
     async def _ensure_tables_exist(self):
-        """确保所有表存在"""
-        logger.info("📋 检查表是否存在...")
+        """确保所有表存在，且主键 id 为自增（表结构初始化）"""
+        logger.info("📋 表结构初始化：检查并创建表...")
         
+        # 1. 创建所有表（若不存在）
         async with self.engine.begin() as conn:
-            # 设置数据库字符集为 utf8mb4
             await conn.execute(text("SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"))
             await conn.execute(text("SET CHARACTER SET utf8mb4"))
-            
-            # 使用 SQLAlchemy 创建所有表（如果不存在）
             await conn.run_sync(Base.metadata.create_all)
-            
-            # 修复 doc_templates 表结构
+        logger.info("📋 表结构初始化：create_all 已完成")
+        
+        # 2. 单独事务：确保主表 id 列为自增（MySQL 1364 必须，与 create_all 分开提交）
+        async with self.engine.begin() as conn:
+            await self._ensure_primary_key_autoincrement(conn)
+        
+        # 3. 其他表结构修补
+        async with self.engine.begin() as conn:
+            await conn.execute(text("SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"))
             await self._fix_doc_templates(conn)
         
-        logger.info("✅ 所有表已确保存在")
+        # 4. 校验：确认 import_tasks.id 为自增
+        await self._verify_autoincrement()
+        logger.info("✅ 表结构初始化完成")
     
     async def _fix_doc_templates(self, conn):
-        """确保 doc_templates 表结构正确"""
-        try:
-            await conn.execute(text("""
-                ALTER TABLE doc_templates 
-                MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT
-            """))
-            logger.info("✅ doc_templates.id 已修复为自增")
-        except Exception as e:
-            logger.debug(f"doc_templates.id 修复跳过: {e}")
-
+        """确保 doc_templates 表结构正确（id 自增已在 _ensure_primary_key_autoincrement 中统一处理）"""
         try:
             await conn.execute(text("""
                 ALTER TABLE doc_templates 
@@ -120,6 +123,49 @@ class DatabaseInitializer:
                 logger.debug("doc_templates.file_path 已存在，跳过")
             else:
                 logger.debug(f"doc_templates.file_path 修复跳过: {e}")
+
+    async def _ensure_primary_key_autoincrement(self, conn):
+        """
+        表结构初始化：确保主表 id 列为自增。
+        MySQL 若 id 未设置 AUTO_INCREMENT，INSERT 不写 id 会报 1364: Field 'id' doesn't have a default value。
+        """
+        tables_with_auto_id = ["import_tasks", "case_files", "ocr_tasks", "doc_generate_tasks", "doc_templates"]
+        critical_tables = ["import_tasks", "case_files"]
+        logger.info("📋 表结构初始化：确保主键 id 自增...")
+        for table_name in tables_with_auto_id:
+            try:
+                await conn.execute(text(
+                    f"ALTER TABLE `{table_name}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT"
+                ))
+                logger.info(f"✅ {table_name}.id 已设为自增")
+            except Exception as e:
+                err = str(e)
+                if "1146" in err or "doesn't exist" in err.lower():
+                    logger.debug(f"表 {table_name} 不存在，跳过: {e}")
+                else:
+                    logger.warning(f"表 {table_name}.id 自增设置失败: {e}")
+                    if table_name in critical_tables:
+                        raise
+
+    async def _verify_autoincrement(self):
+        """校验 import_tasks / case_files 的 id 是否为自增，若不是则打错并抛错"""
+        for table_name in ("import_tasks", "case_files"):
+            async with self.engine.connect() as conn:
+                r = await conn.execute(text("""
+                    SELECT COLUMN_NAME, EXTRA
+                    FROM INFORMATION_SCHEMA.COLUMNS
+                    WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = :tname AND COLUMN_NAME = 'id'
+                """), {"tname": table_name})
+                row = r.fetchone()
+            if not row:
+                logger.warning(f"表 {table_name} 或列 id 不存在，跳过自增校验")
+                continue
+            extra = (row[1] or "").lower()
+            if "auto_increment" not in extra:
+                msg = f"表 {table_name} 的 id 列未设置为自增。请删除该表后重启应用，或手动执行: ALTER TABLE {table_name} MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT"
+                logger.error(msg)
+                raise RuntimeError(msg)
+            logger.info(f"✅ 校验通过：{table_name}.id 为自增")
     
     async def _init_table_data(self):
         """初始化表数据（分表检查）"""
@@ -421,6 +467,9 @@ class DatabaseInitializer:
         # 检查需要修改的列（类型、可空性等）
         for col_name, expected_def in expected.items():
             if col_name in actual:
+                # 不修改主键列，避免 MySQL 丢失 AUTO_INCREMENT（MODIFY id 会去掉自增）
+                if expected_def.get('primary_key'):
+                    continue
                 actual_def = actual[col_name]
                 # 简化比较：只检查类型和可空性
                 if (expected_def['type'] != actual_def['type'] or 
@@ -433,13 +482,17 @@ class DatabaseInitializer:
         """生成 ALTER TABLE 语句"""
         alter_statements = []
         
-        # 添加新列
+        # 添加新列（跳过主键，主键由建表时创建）
         for col_name, col_def in diff['add']:
+            if col_def.get('primary_key'):
+                continue
             nullable = 'NULL' if col_def['nullable'] else 'NOT NULL'
             alter_statements.append(f"ADD COLUMN `{col_name}` {col_def['type']} {nullable}")
         
-        # 修改列（简化处理，只处理可空性）
+        # 修改列（跳过主键，避免 MODIFY id 时 MySQL 丢失 AUTO_INCREMENT）
         for col_name, col_def in diff['modify']:
+            if col_def.get('primary_key'):
+                continue
             nullable = 'NULL' if col_def['nullable'] else 'NOT NULL'
             alter_statements.append(f"MODIFY COLUMN `{col_name}` {col_def['type']} {nullable}")
         

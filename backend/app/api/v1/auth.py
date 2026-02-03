@@ -1,7 +1,7 @@
 """
 认证相关 API
 """
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel, EmailStr
 from typing import Optional
@@ -12,7 +12,8 @@ from sqlalchemy import select
 
 from app.core.config import settings
 from app.core.database import get_db
-from app.core.security import verify_password, create_access_token
+from app.core.security import verify_password, create_access_token, get_current_active_user
+from app.core.audit import AuditLogger
 from app.models.user import User
 from app.utils.encryption import RSAKeyManager
 
@@ -97,7 +98,7 @@ async def get_public_key():
     response_model=LoginResponse,
     tags=["认证"]
 )
-async def login(request: LoginRequest, db: AsyncSession = Depends(get_db)):
+async def login(request: LoginRequest, req: Request, db: AsyncSession = Depends(get_db)):
     """
     用户登录接口
     
@@ -107,6 +108,9 @@ async def login(request: LoginRequest, db: AsyncSession = Depends(get_db)):
     
     返回 JWT Token，用于后续接口认证
     """
+    client_ip = req.client.host if req.client else None
+    user_agent = req.headers.get("user-agent")
+
     # 1. 解密密码（如果已加密）
     password = request.password
     if request.encrypted:
@@ -137,32 +141,38 @@ async def login(request: LoginRequest, db: AsyncSession = Depends(get_db)):
     
     # 3. 验证用户是否存在
     if user is None:
+        await AuditLogger.log_login(db, request.username, "failure", client_ip, user_agent, error_message="用户名或密码错误")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="用户名或密码错误"
         )
-    
+
     # 4. 验证用户状态
     if user.status != 1:
+        await AuditLogger.log_login(db, request.username, "failure", client_ip, user_agent, user_id=user.id, error_message="用户已被禁用")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="用户已被禁用"
         )
-    
+
     # 5. 验证密码
     if not verify_password(password, user.password_hash):
+        await AuditLogger.log_login(db, request.username, "failure", client_ip, user_agent, user_id=user.id, error_message="用户名或密码错误")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="用户名或密码错误"
         )
-    
+
     # 6. 生成 JWT Token
     token_data = {
         "sub": user.username,
         "user_id": user.id
     }
     token = create_access_token(token_data)
-    
+
+    # 记录登录成功审计日志
+    await AuditLogger.log_login(db, user.username, "success", client_ip, user_agent, user_id=user.id)
+
     # 7. 返回 Token 和用户信息
     return {
         "errorCode": 0,
@@ -185,13 +195,18 @@ async def login(request: LoginRequest, db: AsyncSession = Depends(get_db)):
     description="用户登出，使 Token 失效",
     tags=["认证"]
 )
-async def logout(token: str = Depends(oauth2_scheme)):
+async def logout(
+    req: Request,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
     """
     用户登出接口
     
     需要提供有效的 JWT Token
     """
-    # TODO: 实现登出逻辑（如将 Token 加入黑名单）
+    client_ip = req.client.host if req.client else None
+    await AuditLogger.log_logout(db, current_user.id, current_user.username, client_ip=client_ip)
     return {
         "errorCode": 0,
         "message": "登出成功",

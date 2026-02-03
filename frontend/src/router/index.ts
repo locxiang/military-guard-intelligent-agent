@@ -50,7 +50,7 @@ const routes: RouteRecordRaw[] = [
         path: 'case-file/classification',
         name: 'case-file-classification',
         component: () => import('@/views/ArchiveClassificationView.vue'),
-        meta: { title: '案件分类' }
+        meta: { title: '卷宗审核入库' }
       },
       {
         path: 'case-file/search',

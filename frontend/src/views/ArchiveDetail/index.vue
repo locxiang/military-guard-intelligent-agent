@@ -70,6 +70,18 @@
                   <span class="detail-label">部职别</span>
                   <span class="detail-value">{{ caseFile.personInfo.position }}</span>
                 </div>
+                <div class="person-detail-row" v-if="caseFile.personInfo.personCategory">
+                  <span class="detail-label">人员类别</span>
+                  <span class="detail-value">{{ caseFile.personInfo.personCategory }}</span>
+                </div>
+              </div>
+              <div class="person-detail-row mt-2" v-if="caseFile.charge">
+                <span class="detail-label">涉案罪名</span>
+                <span class="detail-value">{{ caseFile.charge }}</span>
+              </div>
+              <div class="person-detail-row" v-if="caseFile.suicideMethod">
+                <span class="detail-label">自杀方式/线索</span>
+                <span class="detail-value">{{ caseFile.suicideMethod }}</span>
               </div>
             </div>
           </CaseContentSection>

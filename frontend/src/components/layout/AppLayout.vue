@@ -7,13 +7,34 @@
     <header class="sticky top-0 z-50 w-full">
       <div class="px-4 sm:px-6 py-3 sm:py-4 military-top-bar">
         <div class="flex items-center justify-between w-full">
-          <!-- Logo 和标题 -->
+          <!-- Logo、标题与指挥大屏入口 -->
           <div class="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
             <div class="flex-shrink-0">
               <h1 class="text-base sm:text-lg lg:text-xl font-title font-semibold truncate military-text-primary">
                 <span class="hidden sm:inline">保卫核心业务智能体平台</span>
                 <span class="sm:hidden">保卫智能体</span>
               </h1>
+            </div>
+            <!-- 指挥大屏：预警决策、统计分析（新窗口打开） -->
+            <div class="hidden sm:flex items-center gap-2 flex-shrink-0">
+              <a
+                :href="screenLinks.earlyWarning"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="military-button-secondary inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium military-text-primary hover:border-blue-500/50 transition-colors"
+              >
+                <el-icon :size="16"><Monitor /></el-icon>
+                <span>预警决策大屏</span>
+              </a>
+              <a
+                :href="screenLinks.statistics"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="military-button-secondary inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium military-text-primary hover:border-blue-500/50 transition-colors"
+              >
+                <el-icon :size="16"><DataLine /></el-icon>
+                <span>统计分析大屏</span>
+              </a>
             </div>
           </div>
 
@@ -87,7 +108,7 @@
             <el-menu-item index="/case-file" class="gov-menu-item-sub">案件列表</el-menu-item>
             <el-menu-item index="/case-file/import" class="gov-menu-item-sub">案件导入</el-menu-item>
             <el-menu-item index="/case-file/progress" class="gov-menu-item-sub">导入进度管理</el-menu-item>
-            <el-menu-item index="/case-file/classification" class="gov-menu-item-sub">案件分类</el-menu-item>
+            <el-menu-item index="/case-file/classification" class="gov-menu-item-sub">卷宗审核入库</el-menu-item>
             <el-menu-item index="/case-file/search" class="gov-menu-item-sub">案件检索</el-menu-item>
           </el-sub-menu>
           <el-sub-menu index="intelligence" class="gov-submenu">
@@ -102,25 +123,25 @@
             <el-menu-item index="/template" class="gov-menu-item-sub">模板管理</el-menu-item>
             <el-menu-item index="/content-review" class="gov-menu-item-sub">内容审查</el-menu-item>
           </el-sub-menu>
-          <el-sub-menu index="knowledge" class="gov-submenu">
+          <el-sub-menu index="knowledge" class="gov-submenu menu-disabled" disabled>
             <template #title>
               <el-icon><Connection /></el-icon>
               <span>知识关联分析</span>
             </template>
-            <el-menu-item index="/knowledge-graph" class="gov-menu-item-sub">关联查询</el-menu-item>
-            <el-menu-item index="/knowledge-graph/entity" class="gov-menu-item-sub">实体管理</el-menu-item>
-            <el-menu-item index="/knowledge-graph/relation" class="gov-menu-item-sub">关系管理</el-menu-item>
-            <el-menu-item index="/knowledge-graph/extract" class="gov-menu-item-sub">知识提取</el-menu-item>
+            <el-menu-item index="/knowledge-graph" class="gov-menu-item-sub" disabled>关联查询</el-menu-item>
+            <el-menu-item index="/knowledge-graph/entity" class="gov-menu-item-sub" disabled>实体管理</el-menu-item>
+            <el-menu-item index="/knowledge-graph/relation" class="gov-menu-item-sub" disabled>关系管理</el-menu-item>
+            <el-menu-item index="/knowledge-graph/extract" class="gov-menu-item-sub" disabled>知识提取</el-menu-item>
           </el-sub-menu>
-          <el-sub-menu index="statistics" class="gov-submenu">
+          <el-sub-menu index="statistics" class="gov-submenu menu-disabled" disabled>
             <template #title>
               <el-icon><DataAnalysis /></el-icon>
               <span>数据统计分析</span>
             </template>
-            <el-menu-item index="/statistics" class="gov-menu-item-sub">数据统计</el-menu-item>
-            <el-menu-item index="/statistics/visualization" class="gov-menu-item-sub">可视化分析</el-menu-item>
-            <el-menu-item index="/statistics/topic" class="gov-menu-item-sub">专题分析</el-menu-item>
-            <el-menu-item index="/statistics/prediction" class="gov-menu-item-sub">预测分析</el-menu-item>
+            <el-menu-item index="/statistics" class="gov-menu-item-sub" disabled>数据统计</el-menu-item>
+            <el-menu-item index="/statistics/visualization" class="gov-menu-item-sub" disabled>可视化分析</el-menu-item>
+            <el-menu-item index="/statistics/topic" class="gov-menu-item-sub" disabled>专题分析</el-menu-item>
+            <el-menu-item index="/statistics/prediction" class="gov-menu-item-sub" disabled>预测分析</el-menu-item>
           </el-sub-menu>
           <el-sub-menu index="system" class="gov-submenu">
             <template #title>
@@ -177,7 +198,7 @@
                 </el-menu-item>
                 <el-menu-item index="/case-file/classification" class="gov-menu-item-sub">
                   <el-icon><Collection /></el-icon>
-                  <template #title>案件分类</template>
+                  <template #title>卷宗审核入库</template>
                 </el-menu-item>
                 <el-menu-item index="/case-file/search" class="gov-menu-item-sub">
                   <el-icon><Search /></el-icon>
@@ -217,49 +238,49 @@
                 </el-menu-item>
               </el-sub-menu>
 
-              <!-- 知识关联分析（业务导向命名） -->
-              <el-sub-menu index="knowledge" class="gov-submenu">
+              <!-- 知识关联分析（业务导向命名）- 暂不可用 -->
+              <el-sub-menu index="knowledge" class="gov-submenu menu-disabled" disabled>
                 <template #title>
                   <el-icon><Connection /></el-icon>
                   <span>知识关联分析</span>
                 </template>
-                <el-menu-item index="/knowledge-graph" class="gov-menu-item-sub">
+                <el-menu-item index="/knowledge-graph" class="gov-menu-item-sub" disabled>
                   <el-icon><Share /></el-icon>
                   <template #title>关联查询</template>
                 </el-menu-item>
-                <el-menu-item index="/knowledge-graph/entity" class="gov-menu-item-sub">
+                <el-menu-item index="/knowledge-graph/entity" class="gov-menu-item-sub" disabled>
                   <el-icon><User /></el-icon>
                   <template #title>实体管理</template>
                 </el-menu-item>
-                <el-menu-item index="/knowledge-graph/relation" class="gov-menu-item-sub">
+                <el-menu-item index="/knowledge-graph/relation" class="gov-menu-item-sub" disabled>
                   <el-icon><Link /></el-icon>
                   <template #title>关系管理</template>
                 </el-menu-item>
-                <el-menu-item index="/knowledge-graph/extract" class="gov-menu-item-sub">
+                <el-menu-item index="/knowledge-graph/extract" class="gov-menu-item-sub" disabled>
                   <el-icon><Reading /></el-icon>
                   <template #title>知识提取</template>
                 </el-menu-item>
               </el-sub-menu>
 
-              <!-- 数据统计分析（业务导向命名） -->
-              <el-sub-menu index="statistics" class="gov-submenu">
+              <!-- 数据统计分析（业务导向命名）- 暂不可用 -->
+              <el-sub-menu index="statistics" class="gov-submenu menu-disabled" disabled>
                 <template #title>
                   <el-icon><DataAnalysis /></el-icon>
                   <span>数据统计分析</span>
                 </template>
-                <el-menu-item index="/statistics" class="gov-menu-item-sub">
+                <el-menu-item index="/statistics" class="gov-menu-item-sub" disabled>
                   <el-icon><PieChart /></el-icon>
                   <template #title>数据统计</template>
                 </el-menu-item>
-                <el-menu-item index="/statistics/visualization" class="gov-menu-item-sub">
+                <el-menu-item index="/statistics/visualization" class="gov-menu-item-sub" disabled>
                   <el-icon><DataLine /></el-icon>
                   <template #title>可视化分析</template>
                 </el-menu-item>
-                <el-menu-item index="/statistics/topic" class="gov-menu-item-sub">
+                <el-menu-item index="/statistics/topic" class="gov-menu-item-sub" disabled>
                   <el-icon><TrendCharts /></el-icon>
                   <template #title>专题分析</template>
                 </el-menu-item>
-                <el-menu-item index="/statistics/prediction" class="gov-menu-item-sub">
+                <el-menu-item index="/statistics/prediction" class="gov-menu-item-sub" disabled>
                   <el-icon><Warning /></el-icon>
                   <template #title>预测分析</template>
                 </el-menu-item>
@@ -346,6 +367,12 @@ import {
   Tools,
   Monitor
 } from '@element-plus/icons-vue'
+
+// 指挥大屏外链（新窗口打开）
+const screenLinks = {
+  earlyWarning: 'https://ai.goviewlink.com/chart/preview/cmkw083jr01yc5yl0yplojfu9',
+  statistics: 'https://ai.goviewlink.com/chart/preview/cmkndovr901iy5y9cucnmr948'
+}
 
 const route = useRoute()
 const router = useRouter()
@@ -563,6 +590,32 @@ const handleCommand = async (command: string) => {
 
 :deep(.el-sub-menu.is-opened > .el-sub-menu__title .el-icon) {
   color: var(--military-primary);
+}
+
+/* 置灰不可用菜单：知识关联分析、数据统计分析 */
+:deep(.el-sub-menu.menu-disabled),
+:deep(.el-sub-menu.menu-disabled .el-sub-menu__title) {
+  opacity: 0.5;
+  cursor: not-allowed;
+  color: var(--military-text-muted) !important;
+  pointer-events: none;
+}
+
+:deep(.el-sub-menu.menu-disabled .el-sub-menu__title:hover) {
+  background: var(--military-bg-card) !important;
+  border-color: var(--military-border) !important;
+  transform: none;
+}
+
+:deep(.el-sub-menu.menu-disabled .el-icon) {
+  color: var(--military-text-muted) !important;
+}
+
+:deep(.el-sub-menu.menu-disabled .el-menu-item.is-disabled),
+:deep(.el-sub-menu.menu-disabled .gov-menu-item-sub.is-disabled) {
+  opacity: 0.6;
+  cursor: not-allowed;
+  color: var(--military-text-muted) !important;
 }
 
 :deep(.el-menu-item.gov-menu-item-sub) {

@@ -84,7 +84,9 @@ class AccessLogMiddleware(BaseHTTPMiddleware):
                 f"client_ip={client_ip} | "
                 f"user_agent={user_agent[:100]}"
             )
-        
+        # 案卷导入接口：请求一进入就打日志，便于排查卡在依赖还是接口体
+        if request.method == "POST" and "/case-file/import" in request.url.path:
+            logger.info(f"[案卷导入] 请求已到达中间件 path={request.url.path}，即将执行依赖与接口")
         try:
             response = await call_next(request)
         except Exception as e:

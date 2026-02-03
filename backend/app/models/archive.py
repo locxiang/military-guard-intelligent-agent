@@ -19,7 +19,9 @@ class CaseFile(Base):
     # 核心字段：内容相关
     incident_time = Column(DateTime, index=True, comment="发生时间")
     person_name = Column(String(100), index=True, comment="姓名")
-    person_info = Column(JSON, comment="人员基本情况: 性别、民族、出生地、入伍时间、部职别")
+    person_info = Column(JSON, comment="人员基本情况: 性别、民族、出生地、入伍时间、部职别、人员类别")
+    charge = Column(String(200), comment="涉案罪名")
+    suicide_method = Column(Text, comment="自杀方式或线索（若涉及）")
     incident_process = Column(Text, comment="事发经过")
     investigation_process_and_conclusion = Column(Text, comment="侦查调查过程及结论")
     cause_and_lesson = Column(Text, comment="原因教训")

@@ -496,7 +496,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, reactive, onMounted, computed, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { 
@@ -610,9 +610,11 @@ const total = ref(0)
 // 案卷列表
 const caseFileList = ref<any[]>([])
 
-// 格式化日期
-const formatDate = (date: Date | string) => {
+// 格式化日期（空值显示为 --，避免渲染报错）
+const formatDate = (date: Date | string | null | undefined) => {
+  if (date == null) return '--'
   const d = typeof date === 'string' ? new Date(date) : date
+  if (Number.isNaN(d.getTime())) return '--'
   return d.toLocaleString('zh-CN', {
     year: 'numeric',
     month: '2-digit',
@@ -804,9 +806,13 @@ const clearFilter = (key: string) => {
   handleSearch()
 }
 
-// 查看详情
+// 查看详情（延后跳转，避免 el-select 等弹出层在卸载时访问已移除的 parentNode）
 const viewDetail = (id: number) => {
-  router.push(`/case-file/${id}`)
+  nextTick(() => {
+    setTimeout(() => {
+      router.push(`/case-file/${id}`)
+    }, 0)
+  })
 }
 
 // 下载
