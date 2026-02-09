@@ -194,6 +194,14 @@ class ReportGenerateRequest(BaseModel):
     report_period: Optional[str] = Field(None, description="报告周期")
 
 
+# 新增：警示小故事生成请求模型
+class StoryGenerateRequest(BaseModel):
+    """警示小故事生成请求"""
+    story_type: str = Field(..., description="故事类型：诈骗/被骗、犯罪、工作重大失误、涉密泄密、违纪违规、其他")
+    keywords: Optional[str] = Field(None, description="可选关键词或情节提示，如：网购退款、兼职刷单、小刘、某单位等")
+    scene_hint: Optional[str] = Field(None, description="可选场景提示，如：某某做了什么被诈骗、某某因为什么被处分")
+
+
 # 新增：会议纪要生成请求模型（支持文字随记与录音转写稿）
 class MeetingGenerateRequest(BaseModel):
     """会议纪要生成请求"""
@@ -345,6 +353,52 @@ async def generate_report_document(
             import json
             yield f"data: {json.dumps({'error': str(e)})}\n\n"
     
+    return StreamingResponse(
+        generate(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no"
+        }
+    )
+
+
+@router.post(
+    "/story",
+    summary="生成警示小故事（流式）",
+    description="根据故事类型和关键词，AI 生成具有生活感、易记忆的警示小故事，用于宣传教育",
+    tags=["文档生成"]
+)
+async def generate_story_document(
+    request: StoryGenerateRequest,
+    token: str = Depends(oauth2_scheme)
+):
+    """
+    生成警示小故事接口（SSE 流式输出）
+    - story_type: 故事类型（诈骗/被骗、犯罪、工作重大失误等）
+    - keywords: 可选关键词或情节提示
+    - scene_hint: 可选场景提示
+    
+    生成要求：有生活感、不爹味、让人记忆深刻，不需要深刻大道理
+    """
+    async def generate():
+        try:
+            context = {
+                "storyType": request.story_type,
+                "keywords": request.keywords or "",
+                "sceneHint": request.scene_hint or ""
+            }
+            async for chunk in qwen_service.generate_story_stream(
+                story_type=request.story_type,
+                context=context
+            ):
+                yield chunk
+        except Exception as e:
+            logger.error(f"生成警示小故事时发生异常: {str(e)}")
+            import json
+            yield f"data: {json.dumps({'error': str(e)})}\n\n"
+
     return StreamingResponse(
         generate(),
         media_type="text/event-stream",

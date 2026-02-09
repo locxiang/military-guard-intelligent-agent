@@ -220,7 +220,104 @@ class QwenService:
         except Exception as e:
             logger.error(f"流式生成文档时发生异常: {str(e)}")
             yield f"data: {json.dumps({'error': str(e)})}\n\n"
-    
+
+    async def generate_story_stream(
+        self,
+        story_type: str,
+        context: Dict[str, Any]
+    ) -> AsyncGenerator[str, None]:
+        """
+        流式生成警示小故事（SSE 格式）
+        
+        风格要求：有生活感、不爹味、让人记忆深刻，不需要深刻大道理
+        类似：xxx 做了什么被诈骗，或 xx 因为 xx 什么...
+        """
+        if not self._api_key_configured or not settings.DASHSCOPE_API_KEY:
+            yield f"data: {json.dumps({'error': 'DASHSCOPE_API_KEY 未配置'})}\n\n"
+            return
+
+        system_prompt = """你是一位擅长写警示小故事的创作者。你的任务是根据用户选择的故事类型和提示，生成一段简短、有生活感的警示小故事。
+
+**核心要求（非常重要）：**
+1. **有生活感**：故事要像身边真实发生的事，细节具体、场景接地气，让人感觉"这事儿可能发生在我身边"
+2. **不爹味、不说教**：不要讲大道理，不要用"我们应该""务必牢记""深刻教训"这类教训式口吻，让故事本身说话
+3. **让人记忆深刻**：通过具体情节、反差、细节让人记住，而不是通过总结道理
+4. **简短精炼**：300-600 字左右，讲清楚一个完整的小故事即可
+5. **不要深刻大道理**：结尾可以有一两句点题，但不要长篇大论谈感想，不要升华成人生哲理
+
+**人物设定（重要，必须遵守）：**
+- 故事主角必须是部队的人：如现役军人、文职人员、职工等，不能是其他职业的普通人
+- 这是给部队用的警示小故事，人物身份、场景、单位都要符合部队环境
+- 人物命名：用"某单位的小张""老王""李干事"等化名，避免真实姓名
+
+**故事结构参考：**
+- 开头：某某的日常/背景
+- 经过：具体发生了什么，细节要真实可感
+- 结果：事情如何收场
+- 结尾：可轻点一句警示，但不要说教
+
+**法律/法规说明（必须体现）：**
+- 必须在故事中明确写出违反了哪条国家法律（如《刑法》第xxx条、某某罪）或部队法规/纪律（如《纪律条令》某某条、涉密规定等）
+- 可以自然融入故事结尾或结果部分，用一两句话点明，便于读者对照学习
+
+**输出格式**：直接输出故事正文，使用 Markdown 格式。可用 ## 标题，段落之间空行。不要用代码块包裹。"""
+
+        keywords = context.get("keywords", "").strip()
+        scene_hint = context.get("sceneHint", "").strip()
+
+        user_parts = [f"请生成一篇「{story_type}」类型的警示小故事。\n\n"]
+        if keywords:
+            user_parts.append(f"**关键词或情节提示**：{keywords}\n\n")
+        if scene_hint:
+            user_parts.append(f"**场景或结构参考**：{scene_hint}\n\n")
+        user_parts.append("请严格遵循「有生活感、不爹味、让人记忆深刻」的要求，直接输出故事内容，使用 Markdown 格式。")
+        user_prompt = "".join(user_parts)
+
+        try:
+            messages = []
+            if system_prompt:
+                messages.append({"role": "system", "content": system_prompt})
+            messages.append({"role": "user", "content": user_prompt})
+
+            responses = Generation.call(
+                model=settings.QWEN_MODEL,
+                messages=messages,
+                temperature=0.85,  # 稍高一点让故事更有变化和生动感
+                max_tokens=2000,
+                stream=True,
+                incremental_output=True,
+                result_format='message'
+            )
+
+            for response in responses:
+                await asyncio.sleep(0)
+                if response.status_code == 200:
+                    if hasattr(response, 'output') and response.output:
+                        if hasattr(response.output, 'choices') and response.output.choices:
+                            choice = response.output.choices[0]
+                            content = ''
+                            if hasattr(choice, 'message'):
+                                message = choice.message
+                                if isinstance(message, dict):
+                                    content = message.get('content', '')
+                                elif hasattr(message, 'content'):
+                                    content = message.content
+                            if not content and isinstance(choice, dict):
+                                msg = choice.get('message', {})
+                                content = msg.get('content', '') if isinstance(msg, dict) else ''
+                            if content:
+                                yield f"data: {json.dumps({'content': content})}\n\n"
+                else:
+                    error_msg = getattr(response, 'message', '生成失败')
+                    logger.error(f"警示小故事流式生成失败: {error_msg}")
+                    yield f"data: {json.dumps({'error': error_msg})}\n\n"
+                    return
+
+            yield f"data: {json.dumps({'done': True})}\n\n"
+        except Exception as e:
+            logger.error(f"警示小故事生成异常: {str(e)}")
+            yield f"data: {json.dumps({'error': str(e)})}\n\n"
+
     def _build_system_prompt(self, doc_type: str, template_hint: Optional[str] = None) -> str:
         """构建系统提示词"""
         base_prompt = f"""你是一位专业的军事保卫部门文书写作助手。你的任务是帮助用户生成规范的{doc_type}文档。

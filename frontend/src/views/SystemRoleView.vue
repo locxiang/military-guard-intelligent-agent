@@ -343,6 +343,7 @@ const permissionTreeData: PermissionNode[] = [
       { id: 'doc-generate-official', name: '公文助手' },
       { id: 'doc-generate-report', name: '报告生成器' },
       { id: 'doc-generate-meeting', name: '会议纪要生成' },
+      { id: 'doc-generate-story', name: '警示小故事生成' },
       { id: 'template', name: '模板管理' }
     ]
   },

@@ -119,6 +119,18 @@ const routes: RouteRecordRaw[] = [
         meta: { title: '会议纪要生成' }
       },
       {
+        path: 'doc-generate/story',
+        name: 'doc-generate-story',
+        component: () => import('@/views/DocGenerateStoryView.vue'),
+        meta: { title: '警示小故事生成' }
+      },
+      {
+        path: 'doc-generate/story/result',
+        name: 'doc-generate-story-result',
+        component: () => import('@/views/DocGenerateStoryResultView.vue'),
+        meta: { title: 'AI生成结果' }
+      },
+      {
         path: 'doc-generate/meeting/result',
         name: 'doc-generate-meeting-result',
         component: () => import('@/views/DocGenerateMeetingResultView.vue'),

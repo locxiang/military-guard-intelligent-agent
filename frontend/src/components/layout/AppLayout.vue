@@ -120,6 +120,7 @@
             <el-menu-item index="/doc-generate/official" class="gov-menu-item-sub">公文助手</el-menu-item>
             <el-menu-item index="/doc-generate/report" class="gov-menu-item-sub">报告生成器</el-menu-item>
             <el-menu-item index="/doc-generate/meeting" class="gov-menu-item-sub">会议纪要生成</el-menu-item>
+            <el-menu-item index="/doc-generate/story" class="gov-menu-item-sub">警示小故事生成</el-menu-item>
             <el-menu-item index="/template" class="gov-menu-item-sub">模板管理</el-menu-item>
             <el-menu-item index="/content-review" class="gov-menu-item-sub">内容审查</el-menu-item>
           </el-sub-menu>
@@ -227,6 +228,10 @@
                 <el-menu-item index="/doc-generate/meeting" class="gov-menu-item-sub">
                   <el-icon><VideoPlay /></el-icon>
                   <template #title>会议纪要生成</template>
+                </el-menu-item>
+                <el-menu-item index="/doc-generate/story" class="gov-menu-item-sub">
+                  <el-icon><Warning /></el-icon>
+                  <template #title>警示小故事生成</template>
                 </el-menu-item>
                 <el-menu-item index="/template" class="gov-menu-item-sub">
                   <el-icon><Files /></el-icon>
