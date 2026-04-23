@@ -109,30 +109,12 @@
             <el-form-item label="汇报主题" prop="subject" class="gov-form-item">
               <el-input v-model="formData.subject" placeholder="如：关于XX工作情况的汇报" class="gov-input" />
             </el-form-item>
-            <el-form-item label="工作情况" prop="situation" class="gov-form-item">
+            <el-form-item label="正文内容" prop="mainBody" class="gov-form-item">
               <el-input
-                v-model="formData.situation"
+                v-model="formData.mainBody"
                 type="textarea"
-                :rows="4"
-                placeholder="概述当前工作进展情况"
-                class="gov-input"
-              />
-            </el-form-item>
-            <el-form-item label="存在问题" class="gov-form-item">
-              <el-input
-                v-model="formData.problems"
-                type="textarea"
-                :rows="3"
-                placeholder="说明工作中遇到的问题和困难（可选）"
-                class="gov-input"
-              />
-            </el-form-item>
-            <el-form-item label="下步计划" class="gov-form-item">
-              <el-input
-                v-model="formData.plan"
-                type="textarea"
-                :rows="3"
-                placeholder="说明下一步工作计划和措施（可选）"
+                :rows="10"
+                placeholder="请输入汇报正文内容，可包括工作情况、存在问题、下步计划等"
                 class="gov-input"
               />
             </el-form-item>
@@ -270,6 +252,7 @@ const formData = reactive({
   situation: '',
   problems: '',
   plan: '',
+  mainBody: '',
   requirements: ''
 })
 
@@ -295,9 +278,7 @@ const loadDemoDataForType = (type: string) => {
   } else if (type === 'report') {
     formData.recipient = '部领导'
     formData.subject = '关于近期保卫工作情况的汇报'
-    formData.situation = '一、工作开展情况\n本月以来，我处围绕营区安全稳定，重点开展了以下工作：一是完成春节前安全隐患排查，共检查重点部位12处，发现并整改隐患3项；二是配合上级完成涉密载体清查，未发现泄密隐患；三是受理并初查线索2件，其中1件已形成立案请示。\n\n二、案件办理进展\n张某某涉嫌盗窃一案：已完成初步调查和证据收集，拟立案材料已按程序报批，待批复后开展讯问及后续处理。'
-    formData.problems = '部分单位对保卫工作配合度不够，个别隐患整改存在拖延现象。'
-    formData.plan = '一是继续跟进张某某案批复及后续办理；二是开展一次全员法制教育；三是与相关单位建立定期联络机制，强化协同。'
+    formData.mainBody = '一、工作开展情况\n本月以来，我处围绕营区安全稳定，重点开展了以下工作：一是完成春节前安全隐患排查，共检查重点部位12处，发现并整改隐患3项；二是配合上级完成涉密载体清查，未发现泄密隐患；三是受理并初查线索2件，其中1件已形成立案请示。\n\n二、案件办理进展\n张某某涉嫌盗窃一案：已完成初步调查和证据收集，拟立案材料已按程序报批，待批复后开展讯问及后续处理。\n\n三、存在的问题\n部分单位对保卫工作配合度不够，个别隐患整改存在拖延现象。\n\n四、下步工作计划\n一是继续跟进张某某案批复及后续办理；二是开展一次全员法制教育；三是与相关单位建立定期联络机制，强化协同。'
   } else if (type === 'notice') {
     formData.recipient = '各营、直属单位'
     formData.subject = '关于加强营区门禁与外来人员管理的通知'

@@ -21,9 +21,7 @@ class ReportDocumentBuilder(BaseDocumentBuilder):
                 - title: 标题
                 - doc_number: 发文字号（可选）
                 - recipient: 主送机关
-                - situation: 基本情况
-                - problems: 存在问题（可选）
-                - plan: 下步计划（可选）
+                - main_body: 正文内容
                 - sender: 发文机关
                 - date: 成文日期
                 - copies: 抄送机关列表（可选）
@@ -52,50 +50,9 @@ class ReportDocumentBuilder(BaseDocumentBuilder):
         if content.get("recipient"):
             self._add_recipient(content["recipient"])
 
-        # 基本情况
-        if content.get("situation"):
-            self._add_paragraph(
-                "一、基本情况",
-                font_name=GB9704_2012.FONT_HEITI,
-                font_size=GB9704_2012.FONT_SIZE_MAIN_BODY,
-                alignment=GB9704_2012.ALIGN_LEFT,
-                first_line_indent=GB9704_2012.FIRST_LINE_INDENT,
-                bold=True,
-                line_spacing_fixed=GB9704_2012.LINE_SPACING_FIXED,
-                zero_spacing=True,
-                keep_with_next=True,
-            )
-            self._add_main_body(content["situation"])
-
-        # 存在问题（可选）
-        if content.get("problems"):
-            self._add_paragraph(
-                "二、存在问题",
-                font_name=GB9704_2012.FONT_HEITI,
-                font_size=GB9704_2012.FONT_SIZE_MAIN_BODY,
-                alignment=GB9704_2012.ALIGN_LEFT,
-                first_line_indent=GB9704_2012.FIRST_LINE_INDENT,
-                bold=True,
-                line_spacing_fixed=GB9704_2012.LINE_SPACING_FIXED,
-                zero_spacing=True,
-                keep_with_next=True,
-            )
-            self._add_main_body(content["problems"])
-
-        # 下步计划（可选）
-        if content.get("plan"):
-            self._add_paragraph(
-                "三、下步计划",
-                font_name=GB9704_2012.FONT_HEITI,
-                font_size=GB9704_2012.FONT_SIZE_MAIN_BODY,
-                alignment=GB9704_2012.ALIGN_LEFT,
-                first_line_indent=GB9704_2012.FIRST_LINE_INDENT,
-                bold=True,
-                line_spacing_fixed=GB9704_2012.LINE_SPACING_FIXED,
-                zero_spacing=True,
-                keep_with_next=True,
-            )
-            self._add_main_body(content["plan"])
+        # 正文
+        if content.get("main_body"):
+            self._add_main_body(content["main_body"])
 
         # 特此报告
         self._add_paragraph(

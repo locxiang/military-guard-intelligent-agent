@@ -39,9 +39,7 @@ REPORT_STRUCTURE: List[DocSection] = [
     DocSection("title", "公文标题"),
     DocSection("doc_number", "发文字号", required=False),
     DocSection("recipient", "主送机关"),
-    DocSection("situation", "基本情况"),
-    DocSection("problems", "存在问题", required=False),
-    DocSection("plan", "下步计划", required=False),
+    DocSection("main_body", "正文"),
     DocSection("sender", "发文机关"),
     DocSection("date", "成文日期"),
 ]
