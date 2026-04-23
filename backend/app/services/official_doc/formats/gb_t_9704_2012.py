@@ -61,7 +61,7 @@ class GB9704_2012:
 
     # 行距 (基于标准行高)
     LINE_SPACING_MAIN_BODY = 1.0  # 正文单倍行距（标准行高）
-    LINE_SPACING_FIXED = Pt(28.95)  # 正文固定行距 28.95磅
+    LINE_SPACING_FIXED = Pt(28)  # 正文固定行距 28磅
 
     # 首行缩进 - 2个三号字
     # 三号字每个字宽约 5.54mm，2字约 11.08mm
