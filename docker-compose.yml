@@ -25,17 +25,15 @@ services:
 
   # 后端服务 (FastAPI)
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile.dev
+    image: military-guard-intelligent-agent-backend:latest
     container_name: military-guard-backend
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 10s
       timeout: 5s
-      retries: 5
-      start_period: 90s
+      retries: 15
+      start_period: 180s
     environment:
       # 数据库配置
       DATABASE_URL: mysql+pymysql://${MYSQL_USER:-user}:${MYSQL_PASSWORD:-password}@mysql:3306/${MYSQL_DATABASE:-military_guard}
@@ -76,13 +74,11 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-    command: sh -c "pip install -r requirements.txt && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
+    command: sh -c "mkdir -p /root/.pip && echo '[global]' > /root/.pip/pip.conf && echo 'index-url = https://pypi.tuna.tsinghua.edu.cn/simple' >> /root/.pip/pip.conf && echo 'extra-index-url = https://mirrors.aliyun.com/pypi/simple/' >> /root/.pip/pip.conf && echo 'trusted-host = pypi.tuna.tsinghua.edu.cn mirrors.aliyun.com' >> /root/.pip/pip.conf && pip install -r requirements.txt && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
 
   # 前端服务 (Vue3 + Vite)
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.dev
+    image: military-guard-intelligent-agent-frontend:latest
     container_name: military-guard-frontend
     restart: unless-stopped
     environment:

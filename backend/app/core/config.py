@@ -37,7 +37,7 @@ class Settings(BaseSettings):
     # JWT_SECRET_KEY 应从环境变量读取，生产环境必须使用强密钥
     JWT_SECRET_KEY: str = os.getenv("JWT_SECRET_KEY", "dev-jwt-secret-key")
     JWT_ALGORITHM: str = "HS256"
-    JWT_EXPIRE_MINUTES: int = 30
+    JWT_EXPIRE_MINUTES: int = int(os.getenv("JWT_EXPIRE_MINUTES", "30" if os.getenv("APP_ENV") == "production" else "1440"))
     JWT_REFRESH_EXPIRE_DAYS: int = 7  # 刷新Token过期天数
     
     # 密码策略配置（等保 2.0 要求）

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #ffffff;
+      color: #000000;
+    }
+    #container {
+      width: 100%;
+      min-height: 100vh;
+      background: #ffffff;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    #loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      gap: 12px;
+      color: #666;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div id="loading">
+    <span>加载中...</span>
+  </div>
+  <div id="container" style="display: none;"></div>
+  <script src="https://unpkg.com/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="https://unpkg.com/docx-preview@0.3.7/dist/docx-preview.min.js"></script>
+  <script>
+    console.log('[docx-preview.html] 页面加载')
+
+    // 从 URL 参数获取文档地址
+    function getUrlParam(name) {
+      var params = new URLSearchParams(window.location.search)
+      return params.get(name)
+    }
+
+    async function init() {
+      var docUrl = getUrlParam('url')
+      console.log('[docx-preview.html] 文档地址:', docUrl)
+
+      if (!docUrl) {
+        document.getElementById('loading').innerHTML = '<span>缺少文档地址</span>'
+        return
+      }
+
+      try {
+        console.log('[docx-preview.html] 开始下载文档')
+        var response = await fetch(docUrl)
+        if (!response.ok) {
+          throw new Error('HTTP ' + response.status)
+        }
+        var blob = await response.blob()
+        console.log('[docx-preview.html] 下载完成, 大小:', blob.size)
+
+        var container = document.getElementById('container')
+        var loading = document.getElementById('loading')
+
+        console.log('[docx-preview.html] 开始渲染')
+        await docx.renderAsync(blob, container, null, {
+          inWrapper: true,
+          breakPages: true,
+          useBase64URL: true
+        })
+
+        loading.style.display = 'none'
+        container.style.display = 'block'
+        console.log('[docx-preview.html] 渲染完成')
+      } catch (e) {
+        console.error('[docx-preview.html] 失败:', e)
+        document.getElementById('loading').innerHTML = '<span>加载失败: ' + e.message + '</span>'
+      }
+    }
+
+    init()
+  </script>
+</body>
+</html>

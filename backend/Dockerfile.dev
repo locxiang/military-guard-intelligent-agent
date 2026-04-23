@@ -3,7 +3,14 @@ FROM python:3.11-slim
 # 设置工作目录
 WORKDIR /app
 
-# 安装系统依赖
+# 配置 pip 使用中国源
+RUN mkdir -p /root/.pip \
+    && echo '[global]' > /root/.pip/pip.conf \
+    && echo 'index-url = https://pypi.tuna.tsinghua.edu.cn/simple' >> /root/.pip/pip.conf \
+    && echo 'extra-index-url = https://mirrors.aliyun.com/pypi/simple/' >> /root/.pip/pip.conf \
+    && echo 'trusted-host = pypi.tuna.tsinghua.edu.cn mirrors.aliyun.com' >> /root/.pip/pip.conf
+
+# 安装系统依赖（含中文字体）
 RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
@@ -14,7 +21,11 @@ RUN apt-get update && apt-get install -y \
     tesseract-ocr-eng \
     libopencv-dev \
     python3-opencv \
-    && rm -rf /var/lib/apt/lists/*
+    fonts-noto-cjk \
+    fonts-wqy-microhei \
+    fonts-wqy-zenhei \
+    && rm -rf /var/lib/apt/lists/* \
+    && fc-cache -fv
 
 # 复制requirements文件
 COPY requirements.txt .

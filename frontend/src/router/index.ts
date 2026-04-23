@@ -95,6 +95,22 @@ const routes: RouteRecordRaw[] = [
         meta: { title: '公文助手' }
       },
       {
+        path: 'doc-generate/official/step1',
+        redirect: '/doc-generate/official'
+      },
+      {
+        path: 'doc-generate/official/step2',
+        name: 'doc-generate-official-step2',
+        component: () => import('@/views/DocGenerateOfficialStep2View.vue'),
+        meta: { title: '内容生成与编辑' }
+      },
+      {
+        path: 'doc-generate/official/step3',
+        name: 'doc-generate-official-step3',
+        component: () => import('@/views/DocGenerateOfficialStep3View.vue'),
+        meta: { title: '标准公文预览' }
+      },
+      {
         path: 'doc-generate/official/result',
         name: 'doc-generate-official-result',
         component: () => import('@/views/DocGenerateOfficialResultView.vue'),

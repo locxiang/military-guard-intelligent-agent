@@ -60,6 +60,21 @@ export interface MeetingGenerateRequest {
   meeting_time?: string
 }
 
+export interface OfficialDocStructureRequest {
+  doc_type: string
+}
+
+export interface OfficialDocGenerateContentRequest {
+  doc_type: string
+  form_data: Record<string, any>
+}
+
+export interface OfficialDocAssembleRequest {
+  doc_type: string
+  sections: Record<string, string>
+  form_data: Record<string, any>
+}
+
 export interface AIGenerateResponse {
   content: string
   usage?: {
@@ -103,5 +118,20 @@ export const docGenerateApi = {
   // 获取任务列表
   getTasks(): Promise<GenerateTask[]> {
     return request.get('/doc-generate/tasks')
+  },
+
+  // 获取公文结构
+  getDocStructure(docType: string): Promise<any> {
+    return request.get(`/doc-generate/structure/${docType}`)
+  },
+
+  // 流式生成公文内容（SSE）
+  generateOfficialContent(data: OfficialDocGenerateContentRequest) {
+    return `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/api/v1/doc-generate/official/generate-content`
+  },
+
+  // 组装标准公文 docx
+  assembleOfficialDoc(data: OfficialDocAssembleRequest): Promise<any> {
+    return request.post('/doc-generate/official/assemble', data)
   }
 }

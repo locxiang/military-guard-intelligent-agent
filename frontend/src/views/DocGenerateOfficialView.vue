@@ -531,20 +531,20 @@ const autoFillFromCase = () => {
 // 生成公文
 const handleGenerate = async () => {
   if (!formRef.value) return
-  
+
   await formRef.value.validate(async (valid) => {
     if (valid) {
       // 保存表单数据到 sessionStorage
       const officialData = {
-        type: selectedType.value,
+        docType: selectedType.value,
         formData: { ...formData },
         selectedCase: selectedCase.value
       }
-      sessionStorage.setItem('officialData', JSON.stringify(officialData))
-      
-      // 跳转到生成结果页面
+      sessionStorage.setItem('officialDocData', JSON.stringify(officialData))
+
+      // 跳转到内容生成页面
       router.push({
-        path: '/doc-generate/official/result',
+        path: '/doc-generate/official/step2',
         query: {
           docType: selectedType.value
         }
