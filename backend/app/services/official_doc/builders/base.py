@@ -241,6 +241,8 @@ class BaseDocumentBuilder(ABC):
             alignment=GB9704_2012.ALIGN_CENTER,
             bold=True,
             space_before=GB9704_2012.TITLE_SPACING_AFTER_RED_LINE,
+            line_spacing_fixed=GB9704_2012.LINE_SPACING_FIXED,
+            zero_spacing=True,
             keep_with_next=True,
         )
 
@@ -260,6 +262,8 @@ class BaseDocumentBuilder(ABC):
             font_size=GB9704_2012.FONT_SIZE_RECIPIENT,
             alignment=GB9704_2012.ALIGN_LEFT,
             space_before=GB9704_2012.RECIPIENT_SPACING_AFTER_TITLE,
+            line_spacing_fixed=GB9704_2012.LINE_SPACING_FIXED,
+            zero_spacing=True,
             keep_with_next=True,
         )
 
@@ -367,20 +371,14 @@ class BaseDocumentBuilder(ABC):
         Args:
             attachment: 附件说明
         """
-        from docx.enum.text import WD_LINE_SPACING
-
         p = self._add_paragraph(
             font_name=GB9704_2012.FONT_FANGSONG,
             font_size=GB9704_2012.FONT_SIZE_MAIN_BODY,
             alignment=GB9704_2012.ALIGN_LEFT,
             space_before=GB9704_2012.ATTACHMENT_SPACING_AFTER_BODY,
+            line_spacing_fixed=GB9704_2012.LINE_SPACING_FIXED,
+            zero_spacing=True,
         )
-
-        # 应用段前、段后为0，固定行距28.95磅
-        p.paragraph_format.space_before = 0
-        p.paragraph_format.space_after = 0
-        p.paragraph_format.line_spacing_rule = WD_LINE_SPACING.EXACTLY
-        p.paragraph_format.line_spacing = GB9704_2012.LINE_SPACING_FIXED
 
         # "附件："
         run = p.add_run("附件：")
@@ -468,12 +466,20 @@ class BaseDocumentBuilder(ABC):
         Args:
             copies: 抄送机关列表
         """
+        from docx.enum.text import WD_LINE_SPACING
+
         p = self.doc.add_paragraph()
         p.alignment = WD_ALIGN_PARAGRAPH.LEFT
 
         # 左缩进 1 字
         left_indent = GB9704_2012.COPY_RECIPIENT_LEFT_INDENT
         p.paragraph_format.left_indent = left_indent
+
+        # 设置行距和段间距
+        p.paragraph_format.space_before = 0
+        p.paragraph_format.space_after = 0
+        p.paragraph_format.line_spacing_rule = WD_LINE_SPACING.EXACTLY
+        p.paragraph_format.line_spacing = GB9704_2012.LINE_SPACING_FIXED
 
         # "抄送："
         run = p.add_run("抄送：")
@@ -493,6 +499,8 @@ class BaseDocumentBuilder(ABC):
             issuer: 印发机关
             issue_date: 印发日期
         """
+        from docx.enum.text import WD_LINE_SPACING
+
         p = self.doc.add_paragraph()
         p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
 
@@ -510,6 +518,12 @@ class BaseDocumentBuilder(ABC):
         # 左空一字 - 印发机关
         left_indent = GB9704_2012.ISSUER_LEFT_INDENT
         p.paragraph_format.left_indent = left_indent
+
+        # 设置行距和段间距
+        p.paragraph_format.space_before = 0
+        p.paragraph_format.space_after = 0
+        p.paragraph_format.line_spacing_rule = WD_LINE_SPACING.EXACTLY
+        p.paragraph_format.line_spacing = GB9704_2012.LINE_SPACING_FIXED
 
         run = p.add_run(issuer)
         self._set_font(run, GB9704_2012.FONT_FANGSONG, GB9704_2012.FONT_SIZE_FOOTER)
