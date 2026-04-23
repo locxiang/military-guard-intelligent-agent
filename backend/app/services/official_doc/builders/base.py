@@ -285,22 +285,28 @@ class BaseDocumentBuilder(ABC):
 
                 # 检查是否包含分段标题，匹配到第一个句号、冒号、分号
                 title_end_pos = -1
-                # 匹配模式：一、 二、 三、 ... 十、
-                patterns = [
-                    r'^[一二三四五六七八九十]+、',
-                    r'^\d+[.、]',
-                    r'^（[一二三四五六七八九十]+）',
-                    r'^\([一二三四五六七八九十]+\)',
-                    r'^\d+）'
-                ]
+                # 匹配模式
+                level1_pattern = r'^[一二三四五六七八九十]+、'  # 一级标题：一、二、
+                level2_patterns = [r'^（[一二三四五六七八九十]+）', r'^\([一二三四五六七八九十]+\)']  # 二级标题：（一）(二)
+                other_patterns = [r'^\d+[.、]', r'^\d+）']  # 其他：1. 2. 1）
 
-                has_title = False
-                for pattern in patterns:
-                    if re.match(pattern, para_text.strip()):
-                        has_title = True
-                        break
+                title_level = 0  # 0=普通正文 1=一级标题 2=二级标题 3=其他标题
+                stripped_text = para_text.strip()
 
-                if has_title:
+                if re.match(level1_pattern, stripped_text):
+                    title_level = 1
+                else:
+                    for pattern in level2_patterns:
+                        if re.match(pattern, stripped_text):
+                            title_level = 2
+                            break
+                    if title_level == 0:
+                        for pattern in other_patterns:
+                            if re.match(pattern, stripped_text):
+                                title_level = 3
+                                break
+
+                if title_level > 0:
                     # 找到第一个句号、冒号、分号的位置作为标题结束
                     for idx, char in enumerate(para_text):
                         if char in ['。', '：', '；', ':', ';']:
@@ -315,7 +321,7 @@ class BaseDocumentBuilder(ABC):
                     title_part = para_text[:title_end_pos]
                     body_part = para_text[title_end_pos:]
 
-                    # 检查标题长度，超过20个字就不处理成黑体
+                    # 检查标题长度，超过20个字就不处理成标题
                     if len(title_part.strip()) > 20:
                         # 超过20个字，当作普通正文处理
                         self._add_paragraph(
@@ -329,7 +335,17 @@ class BaseDocumentBuilder(ABC):
                             keep_with_next=not is_last,
                         )
                     else:
-                        # 不超过20个字，处理成黑体标题
+                        # 根据标题级别选择字体
+                        if title_level == 1:
+                            title_font = GB9704_2012.FONT_HEITI  # 一级标题：黑体
+                            title_bold = False  # 不加粗
+                        elif title_level == 2:
+                            title_font = GB9704_2012.FONT_KAITI  # 二级标题：楷体
+                            title_bold = False
+                        else:
+                            title_font = GB9704_2012.FONT_FANGSONG  # 其他：仿宋
+                            title_bold = False
+
                         # 创建段落，分别添加标题和正文
                         p = self.doc.add_paragraph()
                         p.alignment = GB9704_2012.ALIGN_LEFT
@@ -341,10 +357,10 @@ class BaseDocumentBuilder(ABC):
                         if not is_last:
                             p.paragraph_format.keep_with_next = True
 
-                        # 标题部分使用黑体（从开头到第一个标点符号）
+                        # 标题部分使用对应字体
                         if title_part:
                             run = p.add_run(title_part)
-                            self._set_font(run, GB9704_2012.FONT_HEITI, GB9704_2012.FONT_SIZE_MAIN_BODY, bold=True)
+                            self._set_font(run, title_font, GB9704_2012.FONT_SIZE_MAIN_BODY, bold=title_bold)
 
                         # 正文部分使用仿宋
                         if body_part.strip():
