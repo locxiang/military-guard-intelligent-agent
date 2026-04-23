@@ -52,7 +52,16 @@ class ReportDocumentBuilder(BaseDocumentBuilder):
 
         # 正文
         if content.get("main_body"):
-            self._add_main_body(content["main_body"])
+            main_body = content["main_body"]
+            # 清理开头可能出现的"正文"两个字
+            if main_body.startswith("正文"):
+                main_body = main_body[2:].lstrip()
+            # 清理结尾可能出现的结束语
+            endings = ["特此报告。", "特此汇报。", "特此报告", "特此汇报"]
+            for ending in endings:
+                if main_body.rstrip().endswith(ending):
+                    main_body = main_body.rstrip()[:-len(ending)].rstrip()
+            self._add_main_body(main_body)
 
         # 特此报告
         self._add_paragraph(

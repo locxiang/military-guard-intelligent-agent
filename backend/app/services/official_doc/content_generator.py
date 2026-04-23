@@ -72,6 +72,9 @@ class ContentGenerator:
         base_prompt += "2. 内容要准确、严谨、条理清晰\n"
         base_prompt += "3. 语言要正式、规范，符合公文写作要求\n"
         base_prompt += "4. 直接输出内容，不要使用代码块包裹，不要添加额外说明\n"
+        if section.section_id == "main_body":
+            base_prompt += "5. 不要在开头添加「正文」两个字，直接写正文内容\n"
+            base_prompt += "6. 不要在结尾添加「特此报告」「特此汇报」之类的结束语，后面会自动添加\n"
         base_prompt += "\n"
         base_prompt += "请生成内容："
 
